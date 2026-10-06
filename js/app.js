@@ -1,6 +1,6 @@
 /* =========================================================
    VHP · Vape House Pilar · Lógica de la tienda
-   Los datos (productos, sabores, WhatsApp) están en js/productos.js
+   Los datos (productos, precios, WhatsApp) están en js/productos.js
    ========================================================= */
 (function () {
   "use strict";
@@ -15,14 +15,12 @@
     return;
   }
   var CFG = window.VHP_CONFIG;
-  var DEFAULT_FLAVORS = window.VHP_SABORES;
   var BRAND_COLOR = window.VHP_MARCAS;
   var PRODUCTS = window.VHP_PRODUCTOS.map(function (p, i) {
     p.id = "p" + i;
     p.order = i;
     return p;
   });
-  var OTHER = "__otro__";
   var STORE_KEY = "vhp-pedido-v2";
   var DATA_KEY = "vhp-datos-v1";
 
@@ -49,21 +47,6 @@
     .filter(function (b, i, a) { return a.indexOf(b) === i; });
 
   function brandColor(p) { return BRAND_COLOR[p.marca] || "#a899d6"; }
-  function flavorsOf(p) {
-    if (p.sabores && p.sabores.length) {
-      return p.sabores.map(function (n) { return { nombre: n, color: flavorColor(n) }; });
-    }
-    return DEFAULT_FLAVORS;
-  }
-  function flavorColor(name) {
-    var key = norm(name);
-    for (var i = 0; i < DEFAULT_FLAVORS.length; i++) {
-      if (norm(DEFAULT_FLAVORS[i].nombre) === key) return DEFAULT_FLAVORS[i].color;
-    }
-    return "";
-  }
-
-  function dot(color) { return color ? '<i style="--fc:' + color + '"></i>' : "<i></i>"; }
 
   // ---------- ilustración del vape ----------
   var artSeq = 0;
@@ -114,7 +97,7 @@
   function sanitize(arr) {
     if (!Array.isArray(arr)) return [];
     return arr.filter(function (l) {
-      return l && byId[l.pid] && typeof l.flavor === "string" && l.flavor && l.qty > 0;
+      return l && byId[l.pid] && typeof l.flavor === "string" && l.qty > 0;
     }).map(function (l) { return { pid: l.pid, flavor: l.flavor, qty: Math.floor(l.qty) }; });
   }
   function save() { store.set(STORE_KEY, lines); }
@@ -188,15 +171,15 @@
     var tag = p.etiqueta ? '<span class="tag hot">' + esc(p.etiqueta) + "</span>" : "";
     var puffTag = p.pitadas ? '<span class="tag">' + Math.round(p.pitadas / 1000) + "K</span>" : "";
     return '<li class="card" style="--c:' + brandColor(p) + ";--i:" + i + '" data-card="' + p.id + '">' +
-      '<button class="card-art" type="button" data-pick="' + p.id + '" aria-label="Elegir sabor de ' + esc(name) + '">' +
+      '<button class="card-art" type="button" data-pick="' + p.id + '" aria-label="Agregar ' + esc(name) + '">' +
       art(p) + puffTag + tag + '<span class="badge-slot">' + badge(p.id) + "</span></button>" +
       '<div class="card-body">' +
       '<p class="card-brand">' + esc(p.marca) + "</p>" +
       '<h3 class="card-name">' + esc(p.nombre) + "</h3>" +
       '<p class="card-meta">' + meta + "</p>" +
       '<div class="card-row"><span class="price">' + fmt(p.precio) + "</span>" +
-      '<button class="add" type="button" data-pick="' + p.id + '" aria-label="Elegir sabor y agregar ' + esc(name) + '">' +
-      '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg><span>Elegir sabor</span></button>' +
+      '<button class="add" type="button" data-pick="' + p.id + '" aria-label="Agregar ' + esc(name) + ' al pedido">' +
+      '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg><span>Agregar</span></button>' +
       "</div></div></li>";
   }
 
@@ -249,18 +232,10 @@
     $("#pick-title").textContent = p.nombre;
     $("#pick-meta").textContent = p.pitadas ? num(p.pitadas) + " pitadas · Descartable" : "Descartable";
     $("#pick-price").innerHTML = fmt(p.precio) + " <small>c/u</small>";
-    $("#flavor-grid").innerHTML = flavorsOf(p).map(function (f) {
-      return '<label class="flavor"><input type="radio" name="flavor" value="' + esc(f.nombre) + '">' +
-        "<span>" + dot(f.color) + esc(f.nombre) + "</span></label>";
-    }).join("") +
-      '<label class="flavor other-opt"><input type="radio" name="flavor" value="' + OTHER + '"><span><i></i>Otro sabor</span></label>';
-    $("#other").value = "";
-    $("#other-wrap").hidden = true;
-    $("#pick-hint").textContent = "";
+    $("#flavor-pref").value = "";
     updatePick();
     openDlg(pickDlg);
-    var first = $(".flavor input", pickDlg);
-    if (first) first.focus({ preventScroll: true });
+    $("#pick-add").focus({ preventScroll: true });
     $(".sheet-in", pickDlg).scrollTop = 0;
   }
 
@@ -271,40 +246,19 @@
     $("#pick-sum").textContent = fmt(p.precio * pick.qty);
   }
 
-  function chosenFlavor() {
-    var r = $('input[name="flavor"]:checked', pickDlg);
-    if (!r) return "";
-    if (r.value === OTHER) return $("#other").value.trim();
-    return r.value;
-  }
-
-  pickDlg.addEventListener("change", function (e) {
-    if (e.target.name === "flavor") {
-      var isOther = e.target.value === OTHER;
-      $("#other-wrap").hidden = !isOther;
-      $("#pick-hint").textContent = "";
-      if (isOther) $("#other").focus();
-    }
-  });
   $("#pick-dec").addEventListener("click", function () { if (pick.qty > 1) { pick.qty--; updatePick(); } });
   $("#pick-inc").addEventListener("click", function () { pick.qty++; updatePick(); });
 
   $("#pick-form").addEventListener("submit", function (e) {
     e.preventDefault();
-    var flavor = chosenFlavor();
-    if (!flavor) {
-      var other = $('input[name="flavor"]:checked', pickDlg);
-      $("#pick-hint").textContent = other ? "Escribí qué sabor querés." : "Elegí un sabor para continuar.";
-      (other ? $("#other") : $(".flavor input", pickDlg)).focus();
-      return;
-    }
+    var flavor = $("#flavor-pref").value.trim();
     var p = byId[pick.pid];
     addLine(pick.pid, flavor, pick.qty);
     closeDlg(pickDlg);
     renderCart();
     refreshBadges();
     bump();
-    toast(pick.qty + " × " + p.marca + " " + p.nombre + " · " + flavor, flavorColor(flavor) || brandColor(p));
+    toast(pick.qty + " × " + p.marca + " " + p.nombre + (flavor ? " · " + flavor : ""), brandColor(p));
     if (lastTrigger && document.contains(lastTrigger)) lastTrigger.focus({ preventScroll: true });
   });
 
@@ -312,11 +266,11 @@
   var cartDlg = $("#cart");
 
   function itemHtml(l, i) {
-    var p = byId[l.pid], fc = flavorColor(l.flavor);
+    var p = byId[l.pid];
     return '<li class="item" style="--c:' + brandColor(p) + '">' +
       '<div class="item-art">' + art(p) + "</div>" +
       '<div><p class="item-name">' + esc(p.marca + " " + p.nombre) + "</p>" +
-      '<p class="item-flavor">' + dot(fc) + esc(l.flavor) + "</p></div>" +
+      '<p class="item-flavor">' + (l.flavor ? "Sabor: " + esc(l.flavor) : "Sabor a confirmar") + "</p></div>" +
       '<p class="item-line">' + fmt(l.qty * p.precio) + "</p>" +
       '<div class="item-ctl"><div class="stepper" aria-label="Cantidad">' +
       '<button type="button" data-line="' + i + '" data-act="dec" aria-label="Quitar uno">−</button>' +
@@ -339,7 +293,7 @@
     $("#datos").hidden = empty;
     $("#cart-foot").hidden = empty;
     $("#cart-items").innerHTML = empty ? "" : lines.map(itemHtml).join("") +
-      '<li><button class="add-more" type="button" data-more>+ Agregar otro vape o sabor</button></li>';
+      '<li><button class="add-more" type="button" data-more>+ Agregar otro vape</button></li>';
     $("#cart-total").textContent = fmt(tt.t);
     updateSend();
   }
@@ -378,7 +332,7 @@
 
   // ---------- datos del cliente ----------
   var saved = store.get(DATA_KEY) || {};
-  ["c-name", "c-addr", "c-mail"].forEach(function (id) { if (saved[id]) $("#" + id).value = saved[id]; });
+  ["c-name", "c-addr"].forEach(function (id) { if (saved[id]) $("#" + id).value = saved[id]; });
   if (saved.entrega) {
     var r = $('input[name="entrega"][value="' + saved.entrega + '"]');
     if (r) r.checked = true;
@@ -393,14 +347,13 @@
     var m = [];
     if (!val("#c-name")) m.push({ label: "nombre", el: $("#c-name") });
     if (entrega() === "Envío" && !val("#c-addr")) m.push({ label: "dirección", el: $("#c-addr") });
-    if (!/^\S+@\S+\.\S+$/.test(val("#c-mail"))) m.push({ label: "mail", el: $("#c-mail") });
     return m;
   }
 
   function message() {
     var items = lines.map(function (l) {
       var p = byId[l.pid];
-      return "• " + l.qty + " × " + p.marca + " " + p.nombre + " — " + l.flavor + " (" + fmt(l.qty * p.precio) + ")";
+      return "• " + l.qty + " × " + p.marca + " " + p.nombre + " — " + (l.flavor ? "sabor " + l.flavor : "sabor a confirmar") + " (" + fmt(l.qty * p.precio) + ")";
     });
     var note = val("#note");
     var tt = totals();
@@ -410,7 +363,6 @@
       "*Datos*\nNombre: " + val("#c-name") +
       "\nEntrega: " + entrega() +
       (entrega() === "Envío" ? "\nDirección: " + val("#c-addr") : "") +
-      "\nMail: " + val("#c-mail") +
       (note ? "\n\nAclaraciones: " + note : "");
   }
 
@@ -430,7 +382,7 @@
   $("#datos").addEventListener("input", function (e) {
     if (e.target.classList) e.target.classList.remove("bad");
     store.set(DATA_KEY, {
-      "c-name": val("#c-name"), "c-addr": val("#c-addr"), "c-mail": val("#c-mail"), entrega: entrega()
+      "c-name": val("#c-name"), "c-addr": val("#c-addr"), entrega: entrega()
     });
     syncEntrega();
     updateSend();

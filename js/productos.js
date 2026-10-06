@@ -1,7 +1,7 @@
 /* =========================================================
    VHP · Configuración y catálogo
    Este es el único archivo que hace falta tocar para cambiar
-   precios, productos o sabores.
+   precios o productos.
    ========================================================= */
 
 window.VHP_CONFIG = {
@@ -9,31 +9,9 @@ window.VHP_CONFIG = {
   tienda: "Vape House Pilar"
 };
 
-/* Sabores que se ofrecen por defecto en todos los modelos.
-   "color" es solo para el puntito de color en pantalla. */
-window.VHP_SABORES = [
-  { nombre: "Strawberry Kiwi", color: "#ff6b8b" },
-  { nombre: "Blue Razz Ice", color: "#4f8dff" },
-  { nombre: "Watermelon Ice", color: "#ff5a6e" },
-  { nombre: "Grape Ice", color: "#9b6bff" },
-  { nombre: "Mango Ice", color: "#ffb340" },
-  { nombre: "Peach Ice", color: "#ff9f80" },
-  { nombre: "Blueberry Ice", color: "#5b6cff" },
-  { nombre: "Strawberry Banana", color: "#ffd25a" },
-  { nombre: "Cherry Ice", color: "#e0314f" },
-  { nombre: "Pineapple Ice", color: "#f5d547" },
-  { nombre: "Lemon Lime", color: "#c6f04d" },
-  { nombre: "Miami Mint", color: "#4fe0b5" },
-  { nombre: "Cool Mint", color: "#7ef0e0" },
-  { nombre: "Sour Apple", color: "#8fe05a" },
-  { nombre: "Triple Berry", color: "#c04bd9" },
-  { nombre: "Cola Ice", color: "#a8653a" }
-];
-
 /* Catálogo.
    El stock es ilimitado: todos los productos se pueden pedir.
    Campos opcionales:
-     sabores: ["Sabor 1", "Sabor 2"]  → reemplaza la lista por defecto en ese modelo.
      img: "img/otra-foto.png"         → foto con otro nombre o formato.
                                         Por defecto cada producto busca su foto en img/
                                         (ej: img/elfbar-ice-king.webp). Si no está, se dibuja
