@@ -46,6 +46,7 @@ h1, h2, h3, h4, p { margin: 0; }
 a { color: inherit; }
 img, svg { display: block; }
 button, input, select, textarea { font: inherit; color: inherit; }
+a, button, label, summary { -webkit-tap-highlight-color: transparent; }
 :focus-visible { outline: 2px solid var(--violet-hi); outline-offset: 3px; }
 ::selection { background: var(--violet); color: var(--on-violet); }
 
@@ -344,26 +345,10 @@ dialog::backdrop { background: rgba(4, 3, 7, .72); -webkit-backdrop-filter: blur
 .pick-price { font: 700 1.15rem var(--display); margin-top: 6px; }
 .pick-price small { font: 500 .85rem var(--body); color: var(--muted); }
 
-.flavors { border: 0; margin: 22px 0 0; padding: 0; min-width: 0; }
-.flavors legend { font: 700 1rem var(--display); padding: 0; margin-bottom: 12px; }
-.flavor-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
-.flavor { position: relative; }
-.flavor input { position: absolute; opacity: 0; pointer-events: none; }
-.flavor span {
-  display: flex; align-items: center; gap: 10px; min-height: 48px; padding: 8px 12px;
-  border: 1px solid var(--line); border-radius: 14px; background: var(--bg-2); cursor: pointer;
-  font-weight: 500; font-size: .93rem; line-height: 1.2; transition: border-color .15s, background .15s, transform .15s var(--ease);
-}
-.flavor span:hover { border-color: var(--violet-deep); }
-.flavor span i { flex: none; width: 14px; height: 14px; border-radius: 50%; background: var(--fc, var(--grad)); box-shadow: 0 0 0 3px color-mix(in srgb, var(--fc, #a899d6) 22%, transparent); }
-.flavor input:checked + span { border-color: var(--violet); background: rgba(168,153,214,.14); font-weight: 700; }
-.flavor input:checked + span::after { content: ""; margin-left: auto; flex: none; width: 18px; height: 18px; border-radius: 50%; background: var(--violet) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230b0912' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12l5 5L19 8'/%3E%3C/svg%3E") center / 12px no-repeat; }
-.flavor input:focus-visible + span { outline: 2px solid var(--violet-hi); outline-offset: 2px; }
-.flavor input:active + span { transform: scale(.97); }
-.flavor.other-opt span i { background: conic-gradient(#ff6b8b, #ffb340, #c6f04d, #4fe0b5, #4f8dff, #9b6bff, #ff6b8b); box-shadow: none; }
-.other { margin-top: 12px; }
-.other label { display: block; font-weight: 600; font-size: .9rem; margin-bottom: 6px; }
-
+.flavors { margin-top: 22px; }
+.flavors label { display: block; font: 700 1rem var(--display); margin-bottom: 10px; }
+.flavors .opt { font: 500 .85rem var(--body); color: var(--muted); }
+.flavor-note { color: var(--muted); font-size: .88rem; margin-top: 10px; }
 .pick-foot { display: flex; gap: 10px; margin-top: 22px; position: sticky; bottom: calc(-20px - env(safe-area-inset-bottom, 0px)); padding: 12px 0 4px; background: linear-gradient(180deg, transparent, var(--surface) 30%); }
 .stepper { display: inline-flex; align-items: center; border: 1px solid var(--line); border-radius: 999px; background: var(--bg-2); }
 .stepper button { width: 38px; height: 38px; border: 0; background: transparent; color: var(--text); font-size: 1.25rem; border-radius: 999px; cursor: pointer; transition: background .15s; }
@@ -388,8 +373,7 @@ dialog::backdrop { background: rgba(4, 3, 7, .72); -webkit-backdrop-filter: blur
 .item-art svg { width: 54%; height: auto; }
 .item-art img { width: 100%; height: 100%; object-fit: contain; padding: 8%; }
 .item-name { font-weight: 700; line-height: 1.25; }
-.item-flavor { display: inline-flex; align-items: center; gap: 6px; color: var(--muted); font-size: .88rem; margin-top: 2px; }
-.item-flavor i { width: 10px; height: 10px; border-radius: 50%; background: var(--fc, var(--grad)); }
+.item-flavor { color: var(--muted); font-size: .88rem; margin-top: 2px; }
 .item-line { font-weight: 700; text-align: right; font-variant-numeric: tabular-nums; }
 .item-ctl { grid-column: 2 / -1; display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 8px; }
 .rm { border: 0; background: transparent; color: var(--muted); font-size: .88rem; cursor: pointer; padding: 8px 4px; text-decoration: underline; text-underline-offset: 3px; }
@@ -459,9 +443,9 @@ textarea { min-height: 76px; resize: vertical; }
   .fab { width: 52px; height: 52px; right: 12px; }
   .fab svg { width: 28px; height: 28px; }
   .stats li { padding: 0 14px; }
-  .flavor span { font-size: .88rem; padding: 8px 10px; }
 }
 @media (max-width: 360px) {
+  .btn.full { font-size: .92rem; padding: 0 16px; gap: 8px; }
   .card-row .add { font-size: .84rem; gap: 4px; }
   .card-row .add svg { width: 14px; height: 14px; }
   .stepper.big button { width: 40px; }
@@ -469,7 +453,6 @@ textarea { min-height: 76px; resize: vertical; }
   .btn.grow { padding: 0 14px; font-size: .95rem; }
   .pick-art { width: 76px; height: 88px; }
   .sheet h2 { font-size: 1.3rem; }
-  .flavor-grid { gap: 6px; }
 }
 @media (max-height: 720px) and (max-width: 640px) {
   .drawer-foot .fine { display: none; }
@@ -482,7 +465,6 @@ textarea { min-height: 76px; resize: vertical; }
   .grid { gap: 16px; }
   .card-body { padding: 16px 18px 18px; }
   .card-name { font-size: 1.2rem; }
-  .flavor-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .foot-in { grid-template-columns: 1fr auto; align-items: end; }
   .legal { text-align: right; }
 }
