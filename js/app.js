@@ -5,6 +5,15 @@
 (function () {
   "use strict";
 
+  if (!window.VHP_PRODUCTOS || !window.VHP_CONFIG) {
+    var cat = document.getElementById("catalog");
+    if (cat) cat.innerHTML = '<li class="empty"><p>No pudimos cargar los productos. Revisá tu conexión y recargá la página.</p>' +
+      '<button class="btn ghost" type="button" onclick="location.reload()">Recargar</button></li>';
+    var g = document.getElementById("age");
+    var y = document.getElementById("age-yes");
+    if (g && y) { y.onclick = function () { g.close(); }; g.showModal(); }
+    return;
+  }
   var CFG = window.VHP_CONFIG;
   var DEFAULT_FLAVORS = window.VHP_SABORES;
   var BRAND_COLOR = window.VHP_MARCAS;
@@ -239,7 +248,7 @@
     $("#pick-brand").textContent = p.marca;
     $("#pick-title").textContent = p.nombre;
     $("#pick-meta").textContent = p.pitadas ? num(p.pitadas) + " pitadas · Descartable" : "Descartable";
-    $("#pick-price").textContent = fmt(p.precio) + " c/u";
+    $("#pick-price").innerHTML = fmt(p.precio) + " <small>c/u</small>";
     $("#flavor-grid").innerHTML = flavorsOf(p).map(function (f) {
       return '<label class="flavor"><input type="radio" name="flavor" value="' + esc(f.nombre) + '">' +
         "<span>" + dot(f.color) + esc(f.nombre) + "</span></label>";
@@ -475,8 +484,12 @@
     b.classList.add("bump");
   }
 
-  var top = $("#top");
-  function onScroll() { top.classList.toggle("scrolled", window.scrollY > 8); }
+  var top = $("#top"), fab = $(".fab"), hero = $(".hero");
+  function onScroll() {
+    top.classList.toggle("scrolled", window.scrollY > 8);
+    // El botón flotante aparece recién después de la portada (ahí ya hay botones de WhatsApp).
+    fab.classList.toggle("away", window.scrollY < hero.offsetHeight * 0.6);
+  }
   window.addEventListener("scroll", onScroll, { passive: true });
   onScroll();
 

@@ -64,7 +64,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
   border-radius: 999px; border: 1px solid var(--b); cursor: pointer;
   transition: transform .2s var(--ease), background .2s, box-shadow .25s, border-color .2s;
 }
-.btn svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.btn svg { flex: none; width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 .btn:active { transform: scale(.97); }
 .btn.primary { background: var(--violet); color: var(--on-violet); box-shadow: 0 10px 30px -10px rgba(168, 153, 214, .7); }
 .btn.primary:hover { background: var(--violet-hi); box-shadow: 0 14px 40px -10px rgba(199, 187, 240, .8); }
@@ -73,7 +73,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .btn.ghost { background: rgba(255, 255, 255, .03); color: var(--text); --b: var(--line); }
 .btn.ghost:hover { --b: var(--violet); background: rgba(168, 153, 214, .08); }
 .btn.full { width: 100%; }
-.btn.grow { flex: 1; }
+.btn.grow { flex: 1; min-width: 0; padding: 0 18px; }
 .btn[aria-disabled="true"] { opacity: .6; }
 
 /* ---------- Header ---------- */
@@ -283,6 +283,8 @@ h2 { font: 700 clamp(1.7rem, 5.5vw, 2.6rem)/1.1 var(--display); letter-spacing: 
 .fab:hover { transform: scale(1.08); }
 .fab svg { width: 30px; height: 30px; }
 body.has-bar .fab { bottom: calc(96px + env(safe-area-inset-bottom, 0px)); }
+.fab.away { opacity: 0; transform: scale(.6); pointer-events: none; }
+.fab { transition: transform .25s var(--ease), bottom .3s var(--ease), opacity .25s; }
 
 /* ---------- Barra inferior ---------- */
 .bar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 36; padding: 12px 16px calc(12px + env(safe-area-inset-bottom, 0px)); background: linear-gradient(180deg, transparent, rgba(7,6,10,.92) 30%); animation: slideUp .35s var(--ease); }
@@ -339,6 +341,7 @@ dialog::backdrop { background: rgba(4, 3, 7, .72); -webkit-backdrop-filter: blur
 .sheet h2 { font-size: 1.45rem; margin-top: 2px; }
 .pick-meta { color: var(--muted); font-size: .9rem; margin-top: 2px; }
 .pick-price { font: 700 1.15rem var(--display); margin-top: 6px; }
+.pick-price small { font: 500 .85rem var(--body); color: var(--muted); }
 
 .flavors { border: 0; margin: 22px 0 0; padding: 0; min-width: 0; }
 .flavors legend { font: 700 1rem var(--display); padding: 0; margin-bottom: 12px; }
@@ -448,10 +451,29 @@ textarea { min-height: 76px; resize: vertical; }
 @media (max-width: 420px) {
   .logo-sub { display: none; }
   .cart-label { display: none; }
-  .card-row .add span { display: none; }
-  .card-row .add { width: 40px; padding: 0; }
+  .card-row { flex-direction: column; align-items: stretch; gap: 10px; }
+  .card-row .add { width: 100%; white-space: nowrap; padding: 0 8px; }
+  .card-body { padding: 12px 12px 14px; }
+  body.has-bar .fab { opacity: 0; transform: scale(.6); pointer-events: none; }
+  .fab { width: 52px; height: 52px; right: 12px; }
+  .fab svg { width: 28px; height: 28px; }
   .stats li { padding: 0 14px; }
   .flavor span { font-size: .88rem; padding: 8px 10px; }
+}
+@media (max-width: 360px) {
+  .card-row .add { font-size: .84rem; gap: 4px; }
+  .card-row .add svg { width: 14px; height: 14px; }
+  .stepper.big button { width: 40px; }
+  .stepper.big output { min-width: 24px; }
+  .btn.grow { padding: 0 14px; font-size: .95rem; }
+  .pick-art { width: 76px; height: 88px; }
+  .sheet h2 { font-size: 1.3rem; }
+  .flavor-grid { gap: 6px; }
+}
+@media (max-height: 720px) and (max-width: 640px) {
+  .drawer-foot .fine { display: none; }
+  .drawer-foot { padding-top: 12px; }
+  .total { margin-bottom: 10px; }
 }
 @media (min-width: 640px) {
   .perks { grid-template-columns: repeat(3, 1fr); }
