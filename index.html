@@ -4,516 +4,336 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>VHP | Vape House Pilar</title>
-<meta name="description" content="Vape House Pilar (VHP): lista de vapes con precios y disponibilidad. Armá tu pedido y mandalo por WhatsApp.">
+<meta name="description" content="Vape House Pilar (VHP): vapes descartables Elfbar, Ignite y Reing Bar en Pilar. Elegí modelo y sabor, armá tu pedido y mandalo por WhatsApp.">
+<meta name="theme-color" content="#07060a">
+<meta property="og:title" content="VHP | Vape House Pilar">
+<meta property="og:description" content="Elegí modelo y sabor, armá tu pedido y mandalo por WhatsApp.">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%2307060a'/%3E%3Ctext x='32' y='42' font-family='Arial Black,sans-serif' font-size='24' font-weight='900' text-anchor='middle' fill='%23a899d6'%3EVHP%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;700&family=Unbounded:wght@500;700&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --bg: #000000;
-    --surface: #131019;
-    --line: #2c2639;
-    --text: #f3f0f8;
-    --muted: #a9a1ba;
-    --violet: #a899d6;
-    --violet-deep: #7666a9;
-    --on-violet: #0a0810;
-    --display: "Unbounded", "Arial Black", system-ui, sans-serif;
-    --body: "Hanken Grotesk", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-    color-scheme: dark;
-    box-sizing: border-box;
-    padding-top: env(safe-area-inset-top, 0px);
-    padding-bottom: env(safe-area-inset-bottom, 0px);
-  }
-  html { scroll-padding-top: calc(env(safe-area-inset-top, 0px) + 70px); scroll-behavior: smooth; background: var(--bg); }
-  *, *::before, *::after { box-sizing: inherit; }
-  body { margin: 0; background: var(--bg); color: var(--text); font: 400 1rem/1.55 var(--body); -webkit-text-size-adjust: 100%; }
-  body.has-bar { padding-bottom: 88px; }
-  h1, h2, h3, h4, p { margin: 0; }
-  a { color: inherit; }
-  :focus-visible { outline: 3px solid var(--violet); outline-offset: 3px; }
-  .wrap { width: min(100% - 40px, 760px); margin-inline: auto; }
-  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
-
-  /* Header */
-  .top { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; background: rgba(0,0,0,.9); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); }
-  .top .wrap { display: flex; align-items: center; gap: 18px; height: 60px; }
-  .logo { font-family: var(--display); font-weight: 700; font-size: 1.15rem; color: var(--violet); text-decoration: none; letter-spacing: -.02em; }
-  .top nav { margin-left: auto; display: flex; gap: 16px; font-size: .95rem; }
-  .top nav a { text-decoration: none; color: var(--muted); padding: 8px 0; }
-  .top nav a:hover { color: var(--text); }
-  .cart-btn { display: inline-flex; align-items: center; gap: 8px; border: 1px solid var(--violet-deep); background: transparent; color: var(--text); font: 500 .95rem var(--body); padding: 8px 14px; border-radius: 999px; cursor: pointer; }
-  .cart-btn .n { background: var(--violet); color: var(--on-violet); font-weight: 700; min-width: 22px; height: 22px; border-radius: 999px; display: inline-grid; place-items: center; font-size: .8rem; padding: 0 6px; }
-
-  /* Hero */
-  .hero { position: relative; overflow: hidden; padding: 56px 0 52px; }
-  .hero::before { content: ""; position: absolute; width: 560px; height: 560px; right: -200px; top: -140px; background: radial-gradient(closest-side, rgba(168,153,214,.34), rgba(168,153,214,0)); animation: vapor 1.8s ease-out both; pointer-events: none; }
-  @keyframes vapor { from { opacity: 0; transform: translateY(40px) scale(.9); } to { opacity: 1; transform: none; } }
-  .hero .wrap { position: relative; }
-  .wordmark { font-family: var(--display); font-weight: 700; font-size: clamp(5.5rem, 30vw, 12rem); line-height: .85; letter-spacing: -.05em; color: var(--violet); }
-  .hero .name { font-family: var(--display); font-weight: 500; font-size: clamp(1rem, 3.6vw, 1.4rem); margin-top: 20px; }
-  .hero .lead { max-width: 33rem; color: var(--muted); margin: 14px 0 28px; font-size: 1.05rem; }
-  .actions { display: flex; flex-wrap: wrap; gap: 12px; }
-  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; font: 700 1rem var(--body); text-decoration: none; padding: 14px 24px; border-radius: 999px; border: 1px solid var(--violet); cursor: pointer; }
-  .btn.primary { background: var(--violet); color: var(--on-violet); }
-  .btn.primary:hover { background: #bcaee4; }
-  .btn.ghost { background: transparent; color: var(--text); border-color: var(--violet-deep); }
-  .btn.ghost:hover { border-color: var(--violet); }
-  .btn[aria-disabled="true"] { opacity: .55; }
-
-  /* Productos */
-  .products { padding: 44px 0 20px; border-top: 1px solid var(--line); }
-  h2 { font-family: var(--display); font-weight: 700; font-size: clamp(1.5rem, 5.2vw, 2.1rem); line-height: 1.15; letter-spacing: -.02em; }
-  .sub { color: var(--muted); margin-top: 10px; max-width: 34rem; }
-  .controls { margin-top: 24px; display: flex; flex-direction: column; gap: 14px; }
-  .chips { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; -webkit-overflow-scrolling: touch; }
-  .chip { flex: none; border: 1px solid var(--line); background: transparent; color: var(--text); font: 500 .95rem var(--body); padding: 9px 18px; border-radius: 999px; cursor: pointer; }
-  .chip[aria-pressed="true"] { background: var(--violet); color: var(--on-violet); border-color: var(--violet); font-weight: 700; }
-  .toggle { display: inline-flex; align-items: center; gap: 10px; color: var(--muted); cursor: pointer; width: fit-content; }
-  .toggle input { width: 20px; height: 20px; accent-color: var(--violet); margin: 0; }
-
-  .brand { margin-top: 34px; }
-  .brand h3 { font-family: var(--display); font-weight: 700; font-size: 1.3rem; letter-spacing: -.01em; padding-bottom: 12px; border-bottom: 2px solid var(--violet); }
-  .list { list-style: none; margin: 0; padding: 0; }
-  .row { display: grid; grid-template-columns: 56px 1fr auto; gap: 6px 14px; align-items: center; padding: 16px 0; border-bottom: 1px solid var(--line); }
-  .photo { width: 56px; height: 76px; border-radius: 12px; background: var(--surface); border: 1px solid var(--line); display: grid; place-items: center; overflow: hidden; }
-  .photo svg { width: 100%; height: 100%; }
-  .photo img { width: 100%; height: 100%; object-fit: cover; }
-  .pname { font-family: var(--display); font-weight: 500; font-size: 1rem; }
-  .pmeta { display: flex; flex-wrap: wrap; gap: 4px 14px; margin-top: 6px; color: var(--muted); font-size: .9rem; }
-  .status { display: inline-flex; align-items: center; gap: 7px; }
-  .status::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--violet); }
-  .status.no::before { background: transparent; border: 1.5px solid var(--muted); }
-  .status.ok { color: var(--violet); }
-  .pright { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; }
-  .price { font-weight: 700; font-size: 1.15rem; font-variant-numeric: tabular-nums; }
-  .add, .ask { display: inline-flex; align-items: center; justify-content: center; min-height: 40px; padding: 0 18px; border-radius: 999px; border: 1px solid var(--violet); background: transparent; color: var(--violet); font: 700 .95rem var(--body); text-decoration: none; cursor: pointer; }
-  .add:hover { background: var(--violet); color: var(--on-violet); }
-  .ask { border-color: var(--line); color: var(--muted); font-weight: 500; }
-  .stepper { display: inline-flex; align-items: center; border: 1px solid var(--violet); border-radius: 999px; }
-  .stepper button { width: 40px; height: 40px; border: 0; background: transparent; color: var(--violet); font: 500 1.3rem var(--body); border-radius: 999px; cursor: pointer; }
-  .stepper button:disabled { opacity: .35; cursor: not-allowed; }
-  .stepper output { min-width: 26px; text-align: center; font-weight: 700; }
-  .empty { margin-top: 28px; color: var(--muted); }
-
-  /* Contacto */
-  .contact { margin-top: 40px; padding: 52px 0 56px; border-top: 1px solid var(--line); }
-  .contact .btn { margin-top: 24px; }
-  .facts { margin: 30px 0 0; display: grid; gap: 0; }
-  .facts div { display: grid; grid-template-columns: 9.5rem 1fr; gap: 12px; padding: 14px 0; border-top: 1px solid var(--line); }
-  .facts dt { color: var(--muted); }
-  .facts dd { margin: 0; }
-  footer { border-top: 1px solid var(--line); padding: 28px 0 40px; color: var(--muted); font-size: .88rem; }
-  footer p + p { margin-top: 6px; }
-  footer strong { color: var(--text); font-family: var(--display); font-weight: 700; }
-
-  /* Barra de pedido */
-  .bar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 30; padding: 12px 20px calc(12px + env(safe-area-inset-bottom, 0px)); background: rgba(0,0,0,.94); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); border-top: 1px solid var(--line); }
-  .bar[hidden] { display: none; }
-  .bar .btn { width: min(100%, 720px); margin: 0 auto; display: flex; justify-content: space-between; }
-
-  /* Diálogos */
-  dialog { border: 1px solid var(--line); background: var(--surface); color: var(--text); padding: 0; }
-  dialog::backdrop { background: rgba(0,0,0,.82); }
-  #age { width: min(92vw, 420px); border-radius: 22px; padding: 30px 26px; }
-  #age::backdrop { background: rgba(0,0,0,.97); }
-  #age h2 { font-size: 1.5rem; }
-  #age p { color: var(--muted); margin-top: 12px; }
-  #age .actions { margin-top: 24px; flex-direction: column; }
-  #age .btn { width: 100%; }
-  #cart { position: fixed; inset: auto 0 0 0; margin: 0 auto; width: 100%; max-width: 560px; height: fit-content; max-height: 90dvh; overflow: auto; border-radius: 22px 22px 0 0; border-bottom: 0; padding: 22px 22px calc(22px + env(safe-area-inset-bottom, 0px)); }
-  .cart-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-  .cart-head h2 { font-size: 1.4rem; }
-  .close { border: 1px solid var(--line); background: transparent; color: var(--text); font: 500 .95rem var(--body); padding: 8px 16px; border-radius: 999px; cursor: pointer; }
-  .item { display: grid; grid-template-columns: 1fr auto; gap: 8px 14px; align-items: center; padding: 16px 0; border-bottom: 1px solid var(--line); }
-  .item .iname { font-weight: 700; }
-  .item .iunit { color: var(--muted); font-size: .9rem; }
-  .item .iline { font-weight: 700; text-align: right; font-variant-numeric: tabular-nums; }
-  .item .field { grid-column: 1 / -1; }
-  .link { border: 0; background: transparent; color: var(--violet); font: 500 .92rem var(--body); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; justify-self: end; padding: 8px 0; }
-  .cart-empty { padding: 28px 0 8px; color: var(--muted); }
-  .field label, .note-label { display: block; font-weight: 500; font-size: .92rem; margin-bottom: 6px; }
-  input[type="text"], input[type="email"], textarea { width: 100%; background: var(--bg); color: var(--text); border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px; font: 400 1rem var(--body); }
-  textarea { min-height: 70px; resize: vertical; }
-  ::placeholder { color: #7d7590; }
-  .datos { margin-top: 22px; display: grid; gap: 14px; }
-  .datos h3 { font-family: var(--display); font-weight: 700; font-size: 1.05rem; }
-  .total { display: flex; justify-content: space-between; align-items: baseline; margin: 22px 0 16px; font-size: 1.1rem; }
-  .total strong { font-family: var(--display); font-size: 1.4rem; font-variant-numeric: tabular-nums; }
-  .fine { color: var(--muted); font-size: .88rem; margin-top: 12px; }
-  .hint { color: #e6b8c8; font-size: .92rem; margin-top: 10px; min-height: 1.4em; }
-  #send { width: 100%; }
-
-  @media (max-width: 440px) {
-    .top nav { gap: 12px; font-size: .9rem; }
-    .facts div { grid-template-columns: 1fr; gap: 2px; }
-    .row { grid-template-columns: 52px 1fr auto; gap: 6px 12px; }
-    .photo { width: 52px; height: 70px; }
-    .pname { font-size: .95rem; }
-  }
-  @media (prefers-reduced-motion: reduce) {
-    *, *::before, *::after { animation: none !important; scroll-behavior: auto !important; }
-  }
-</style>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=Unbounded:wght@500;700;800&display=swap" rel="stylesheet">
+<script>document.documentElement.classList.add("js");</script>
+<link rel="stylesheet" href="css/styles.css">
+<script src="js/productos.js" defer></script>
+<script src="js/app.js" defer></script>
 </head>
 <body>
 
-<header class="top">
-  <div class="wrap">
-    <a class="logo" href="#inicio" aria-label="VHP, Vape House Pilar">VHP</a>
-    <nav aria-label="Principal">
+<a class="skip" href="#productos">Saltar a productos</a>
+
+<header class="top" id="top">
+  <div class="wrap top-in">
+    <a class="logo" href="#inicio" aria-label="VHP, Vape House Pilar">
+      <span class="logo-mark">VHP</span>
+      <span class="logo-sub">Vape House Pilar</span>
+    </a>
+    <nav class="nav" aria-label="Principal">
       <a href="#productos">Productos</a>
+      <a href="#como">Cómo comprar</a>
+      <a href="#faq">Preguntas</a>
       <a href="#contacto">Contacto</a>
     </nav>
-    <button class="cart-btn" id="open-cart" type="button" aria-label="Ver pedido">Pedido <span class="n" id="count">0</span></button>
+    <button class="cart-btn" id="open-cart" type="button" aria-label="Ver pedido">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg>
+      <span class="cart-label">Pedido</span>
+      <span class="n" id="count">0</span>
+    </button>
   </div>
 </header>
 
 <main id="inicio">
+
+  <!-- ============ HERO ============ -->
   <section class="hero">
-    <div class="wrap">
-      <h1 class="wordmark">VHP</h1>
-      <p class="name">Vape House Pilar</p>
-      <p class="lead">Vapes descartables en Pilar. Mirá la lista, armá tu pedido y mandalo por WhatsApp.</p>
-      <div class="actions">
-        <a class="btn primary" href="#productos">Ver productos</a>
-        <a class="btn ghost" data-wa="Hola! Quiero consultar la disponibilidad de vapes." href="#contacto" target="_blank" rel="noopener">Consultar disponibilidad</a>
+    <div class="smoke" aria-hidden="true"><span></span><span></span><span></span></div>
+    <div class="wrap hero-grid">
+      <div class="hero-copy">
+        <p class="eyebrow"><span class="dot"></span> Pedidos abiertos · Pilar, Bs. As.</p>
+        <h1 class="hero-title">Tu vape,<br><span class="grad">tu sabor.</span></h1>
+        <p class="lead">Elfbar, Ignite y Reing Bar. Elegí el modelo, elegí el sabor que quieras y mandá tu pedido por WhatsApp en un minuto.</p>
+        <div class="actions">
+          <a class="btn primary" href="#productos">
+            Ver productos
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </a>
+          <a class="btn ghost" data-wa="Hola! Quiero hacer una consulta sobre los vapes." href="#contacto" target="_blank" rel="noopener">Consultar por WhatsApp</a>
+        </div>
+        <ul class="stats" aria-label="Resumen">
+          <li><strong id="stat-models">14</strong><span>modelos</span></li>
+          <li><strong id="stat-brands">3</strong><span>marcas</span></li>
+          <li><strong>hasta 50K</strong><span>pitadas</span></li>
+        </ul>
+      </div>
+      <div class="hero-art" aria-hidden="true">
+        <div class="orb"></div>
+        <div class="float f1" id="hero-v1"></div>
+        <div class="float f2" id="hero-v2"></div>
+        <div class="float f3" id="hero-v3"></div>
       </div>
     </div>
   </section>
 
+  <!-- ============ CINTA DE MARCAS ============ -->
+  <div class="ticker" aria-hidden="true">
+    <div class="ticker-track">
+      <span>Elfbar</span><span>✦</span><span>Ignite</span><span>✦</span><span>Reing Bar</span><span>✦</span><span>Elegí tu sabor</span><span>✦</span><span>Pedido por WhatsApp</span><span>✦</span>
+      <span>Elfbar</span><span>✦</span><span>Ignite</span><span>✦</span><span>Reing Bar</span><span>✦</span><span>Elegí tu sabor</span><span>✦</span><span>Pedido por WhatsApp</span><span>✦</span>
+    </div>
+  </div>
+
+  <!-- ============ BENEFICIOS ============ -->
+  <section class="perks wrap" aria-label="Por qué VHP">
+    <article class="perk reveal">
+      <div class="perk-ic"><svg viewBox="0 0 24 24"><path d="M12 3c3 4 6 7 6 11a6 6 0 0 1-12 0c0-4 3-7 6-11Z"/></svg></div>
+      <h3>Elegís el sabor</h3>
+      <p>Cada vape lo pedís con el sabor que quieras, y podés combinar varios.</p>
+    </article>
+    <article class="perk reveal">
+      <div class="perk-ic"><svg viewBox="0 0 24 24"><path d="M4 12l5 5L20 6"/></svg></div>
+      <h3>Siempre disponibles</h3>
+      <p>Todos los modelos de la lista se pueden pedir, en la cantidad que necesites.</p>
+    </article>
+    <article class="perk reveal">
+      <div class="perk-ic"><svg viewBox="0 0 24 24"><path d="M4 20l1.5-4A8 8 0 1 1 9 19.5L4 20Z"/></svg></div>
+      <h3>Pedido por WhatsApp</h3>
+      <p>Armás el carrito acá y te llega todo listo al chat para confirmar.</p>
+    </article>
+  </section>
+
+  <!-- ============ PRODUCTOS ============ -->
   <section class="products" id="productos" aria-labelledby="t-prod">
     <div class="wrap">
-      <h2 id="t-prod">Productos</h2>
-      <p class="sub">Precios en pesos argentinos. Sumá lo que quieras al pedido, elegí el sabor y mandalo por WhatsApp.</p>
-
-      <div class="controls">
-        <div class="chips" role="group" aria-label="Filtrar por marca" id="chips"></div>
-        <label class="toggle"><input type="checkbox" id="only"> Mostrar solo disponibles</label>
+      <div class="sec-head">
+        <p class="kicker">Catálogo</p>
+        <h2 id="t-prod">Elegí tu vape</h2>
+        <p class="sub">Precios en pesos argentinos. Tocá un producto para elegir el sabor y la cantidad.</p>
       </div>
 
-      <div id="catalog"></div>
+      <div class="toolbar">
+        <label class="search">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
+          <span class="sr">Buscar</span>
+          <input type="search" id="q" placeholder="Buscar modelo o marca…" autocomplete="off">
+        </label>
+        <label class="sort">
+          <span class="sr">Ordenar</span>
+          <select id="sort">
+            <option value="rec">Recomendados</option>
+            <option value="asc">Menor precio</option>
+            <option value="desc">Mayor precio</option>
+            <option value="puffs">Más pitadas</option>
+          </select>
+        </label>
+      </div>
+      <div class="chips" role="group" aria-label="Filtrar por marca" id="chips"></div>
+
+      <p class="result-count" id="result-count" aria-live="polite"></p>
+      <ul class="grid" id="catalog"></ul>
     </div>
   </section>
 
+  <!-- ============ CÓMO COMPRAR ============ -->
+  <section class="how" id="como" aria-labelledby="t-how">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="kicker">Paso a paso</p>
+        <h2 id="t-how">Cómo comprar</h2>
+      </div>
+      <ol class="steps">
+        <li class="step reveal"><span class="step-n">01</span><h3>Elegí el modelo</h3><p>Filtrá por marca o buscá el que querés.</p></li>
+        <li class="step reveal"><span class="step-n">02</span><h3>Elegí el sabor</h3><p>Seleccioná uno de la lista o escribí el que buscás.</p></li>
+        <li class="step reveal"><span class="step-n">03</span><h3>Completá tus datos</h3><p>Nombre, dirección y si retirás o te lo enviamos.</p></li>
+        <li class="step reveal"><span class="step-n">04</span><h3>Enviá por WhatsApp</h3><p>Te llega el pedido armado y coordinamos pago y entrega.</p></li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- ============ FAQ ============ -->
+  <section class="faq" id="faq" aria-labelledby="t-faq">
+    <div class="wrap narrow">
+      <div class="sec-head">
+        <p class="kicker">Dudas</p>
+        <h2 id="t-faq">Preguntas frecuentes</h2>
+      </div>
+      <div class="acc">
+        <details class="reveal">
+          <summary>¿Cómo elijo el sabor?</summary>
+          <p>Al tocar “Elegir sabor” en cualquier producto se abre la lista de sabores. Elegís uno, o escribís otro en “Otro sabor”. Si querés varios sabores del mismo modelo, agregás uno por vez.</p>
+        </details>
+        <details class="reveal">
+          <summary>¿Hay stock?</summary>
+          <p>Sí. Todos los modelos de la lista se pueden pedir y no hay límite de cantidad.</p>
+        </details>
+        <details class="reveal">
+          <summary>¿Cómo pago?</summary>
+          <p>Cuando nos llega tu pedido por WhatsApp te confirmamos el total y coordinamos el medio de pago.</p>
+        </details>
+        <details class="reveal">
+          <summary>¿Hacen envíos?</summary>
+          <p>Podés retirar o pedir envío. Lo elegís al completar tus datos y coordinamos los detalles por WhatsApp.</p>
+        </details>
+        <details class="reveal">
+          <summary>¿Puede comprar cualquiera?</summary>
+          <p>No. La venta es exclusiva para mayores de 18 años.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CONTACTO ============ -->
   <section class="contact" id="contacto" aria-labelledby="t-contact">
     <div class="wrap">
-      <h2 id="t-contact">Contacto</h2>
-      <p class="sub">Escribinos para confirmar disponibilidad y sabores, o para coordinar cómo recibir tu pedido.</p>
-      <a class="btn primary" data-wa="Hola! Quiero hacer una consulta." href="#contacto" target="_blank" rel="noopener">Escribir por WhatsApp</a>
-      <dl class="facts">
-        <div><dt>Ubicación</dt><dd>Pilar, Buenos Aires</dd></div>
-        <div><dt>Cómo pedir</dt><dd>Por WhatsApp</dd></div>
-        <div><dt>Entrega y retiro</dt><dd>A coordinar con nosotros</dd></div>
-      </dl>
+      <div class="contact-card reveal">
+        <div>
+          <p class="kicker">Contacto</p>
+          <h2 id="t-contact">¿Tenés alguna duda?</h2>
+          <p class="sub">Escribinos y te respondemos por WhatsApp.</p>
+          <a class="btn primary wa-btn" data-wa="Hola! Quiero hacer una consulta." href="#contacto" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l1.5-4A8 8 0 1 1 9 19.5L4 20Z"/></svg>
+            Escribir por WhatsApp
+          </a>
+        </div>
+        <dl class="facts">
+          <div><dt>Ubicación</dt><dd>Pilar, Buenos Aires</dd></div>
+          <div><dt>Cómo pedir</dt><dd>Por WhatsApp</dd></div>
+          <div><dt>Entrega</dt><dd>Retiro o envío, a coordinar</dd></div>
+          <div><dt>WhatsApp</dt><dd><a data-wa="Hola!" href="#contacto" target="_blank" rel="noopener">+54 9 11 6663-4064</a></dd></div>
+        </dl>
+      </div>
     </div>
   </section>
 </main>
 
-<footer>
-  <div class="wrap">
-    <p><strong>VHP</strong> Vape House Pilar</p>
-    <p>Venta exclusiva a mayores de 18 años.</p>
-    <p>Los vapes contienen nicotina, una sustancia que genera adicción.</p>
+<footer class="foot">
+  <div class="wrap foot-in">
+    <div>
+      <p class="logo-mark">VHP</p>
+      <p>Vape House Pilar</p>
+    </div>
+    <div class="legal">
+      <p><strong>+18</strong> Venta exclusiva a mayores de 18 años.</p>
+      <p>Los vapes contienen nicotina, una sustancia que genera adicción.</p>
+      <p>© <span id="year"></span> Vape House Pilar</p>
+    </div>
   </div>
 </footer>
 
+<!-- Botón flotante de WhatsApp -->
+<a class="fab" data-wa="Hola! Quiero hacer una consulta." href="#contacto" target="_blank" rel="noopener" aria-label="Escribir por WhatsApp">
+  <svg viewBox="0 0 32 32" aria-hidden="true"><path fill="currentColor" d="M16 3a13 13 0 0 0-11.2 19.6L3 29l6.6-1.7A13 13 0 1 0 16 3Zm0 23.7c-2 0-4-.5-5.6-1.6l-.4-.2-3.9 1 1-3.8-.3-.4A10.7 10.7 0 1 1 16 26.7Zm5.9-8c-.3-.2-1.9-1-2.2-1-.3-.1-.5-.2-.7.2l-1 1.2c-.2.2-.4.2-.7.1a8.8 8.8 0 0 1-4.4-3.8c-.3-.6.3-.5 1-1.7.1-.2 0-.4 0-.5l-1-2.4c-.3-.6-.5-.5-.7-.5h-.6c-.2 0-.6.1-.9.4-.3.3-1.2 1.1-1.2 2.8s1.2 3.2 1.4 3.5c.2.2 2.4 3.6 5.7 5 2.1.9 3 1 4 .8.7-.1 1.9-.8 2.2-1.5.3-.8.3-1.4.2-1.5l-.6-.3Z"/></svg>
+</a>
+
+<!-- Barra inferior con el total -->
 <div class="bar" id="bar" hidden>
-  <button class="btn primary" id="bar-open" type="button"><span id="bar-label">Ver pedido</span><span id="bar-total"></span></button>
+  <button class="bar-btn" id="bar-open" type="button">
+    <span class="bar-left"><span class="bar-n" id="bar-n">0</span><span id="bar-label">Ver pedido</span></span>
+    <span class="bar-total" id="bar-total">$0</span>
+  </button>
 </div>
 
-<div class="sr" id="live" aria-live="polite"></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-<dialog id="cart" aria-labelledby="cart-title">
-  <div class="cart-head">
-    <h2 id="cart-title" tabindex="-1">Tu pedido</h2>
-    <button class="close" id="cart-close" type="button">Cerrar</button>
-  </div>
-  <div id="cart-items"></div>
-  <div id="cart-foot" hidden>
-    <div class="datos">
-      <h3>Tus datos</h3>
-      <div class="field"><label for="c-name">Nombre y apellido</label><input type="text" id="c-name" autocomplete="name" placeholder="Nombre y apellido"></div>
-      <div class="field"><label for="c-addr">Dirección</label><input type="text" id="c-addr" autocomplete="street-address" placeholder="Calle, número y localidad"></div>
-      <div class="field"><label for="c-mail">Mail</label><input type="email" id="c-mail" autocomplete="email" inputmode="email" placeholder="tumail@ejemplo.com"></div>
-      <div class="field"><label for="note">Aclaraciones (opcional)</label><textarea id="note" placeholder="Ej: si retirás o querés que te lo enviemos"></textarea></div>
+<!-- ============ ELEGIR SABOR ============ -->
+<dialog class="sheet" id="pick" aria-labelledby="pick-title">
+  <form method="dialog" class="sheet-in" id="pick-form">
+    <button class="x" type="button" data-close aria-label="Cerrar">
+      <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg>
+    </button>
+    <div class="pick-head">
+      <div class="pick-art" id="pick-art"></div>
+      <div>
+        <p class="pick-brand" id="pick-brand"></p>
+        <h2 id="pick-title"></h2>
+        <p class="pick-meta" id="pick-meta"></p>
+        <p class="pick-price" id="pick-price"></p>
+      </div>
     </div>
-    <div class="total"><span>Total</span><strong id="cart-total">$0</strong></div>
-    <a class="btn primary" id="send" href="#" target="_blank" rel="noopener">Enviar pedido por WhatsApp</a>
-    <p class="hint" id="hint" role="status"></p>
-    <p class="fine">Se abre WhatsApp con tu solicitud armada. Confirmamos disponibilidad y coordinamos el pago y la entrega por ahí.</p>
+
+    <fieldset class="flavors">
+      <legend>Elegí el sabor</legend>
+      <div class="flavor-grid" id="flavor-grid"></div>
+      <div class="other" id="other-wrap" hidden>
+        <label for="other">Escribí el sabor</label>
+        <input type="text" id="other" placeholder="Ej: Strawberry Watermelon" autocomplete="off" maxlength="60">
+      </div>
+    </fieldset>
+
+    <div class="pick-foot">
+      <div class="stepper big" aria-label="Cantidad">
+        <button type="button" id="pick-dec" aria-label="Quitar uno">−</button>
+        <output id="pick-qty">1</output>
+        <button type="button" id="pick-inc" aria-label="Sumar uno">+</button>
+      </div>
+      <button class="btn primary grow" type="submit" id="pick-add">Agregar · <span id="pick-sum">$0</span></button>
+    </div>
+    <p class="hint" id="pick-hint" role="alert"></p>
+  </form>
+</dialog>
+
+<!-- ============ CARRITO ============ -->
+<dialog class="drawer" id="cart" aria-labelledby="cart-title">
+  <div class="drawer-in">
+    <div class="drawer-head">
+      <h2 id="cart-title" tabindex="-1">Tu pedido</h2>
+      <button class="x" type="button" data-close aria-label="Cerrar">
+        <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg>
+      </button>
+    </div>
+
+    <div class="drawer-body">
+      <ul class="items" id="cart-items"></ul>
+      <div class="cart-empty" id="cart-empty">
+        <div class="empty-ic"><svg viewBox="0 0 24 24"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg></div>
+        <p>Tu pedido está vacío.</p>
+        <button class="btn ghost" type="button" id="go-shop">Ver productos</button>
+      </div>
+
+      <form class="datos" id="datos" hidden novalidate>
+        <h3>Tus datos</h3>
+        <div class="field"><label for="c-name">Nombre y apellido</label><input type="text" id="c-name" autocomplete="name" placeholder="Nombre y apellido" required></div>
+        <div class="field">
+          <span class="label">Entrega</span>
+          <div class="seg" role="radiogroup" aria-label="Entrega">
+            <label><input type="radio" name="entrega" value="Envío" checked><span>Envío</span></label>
+            <label><input type="radio" name="entrega" value="Retiro"><span>Retiro</span></label>
+          </div>
+        </div>
+        <div class="field" id="addr-field"><label for="c-addr">Dirección</label><input type="text" id="c-addr" autocomplete="street-address" placeholder="Calle, número y localidad"></div>
+        <div class="field"><label for="c-mail">Mail</label><input type="email" id="c-mail" autocomplete="email" inputmode="email" placeholder="tumail@ejemplo.com" required></div>
+        <div class="field"><label for="note">Aclaraciones (opcional)</label><textarea id="note" placeholder="Ej: horario en que te queda cómodo"></textarea></div>
+      </form>
+    </div>
+
+    <div class="drawer-foot" id="cart-foot" hidden>
+      <div class="total"><span>Total</span><strong id="cart-total">$0</strong></div>
+      <a class="btn primary wa-btn full" id="send" href="#" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l1.5-4A8 8 0 1 1 9 19.5L4 20Z"/></svg>
+        Enviar pedido por WhatsApp
+      </a>
+      <p class="hint" id="hint" role="status"></p>
+      <p class="fine">Se abre WhatsApp con tu pedido armado. Confirmamos y coordinamos el pago y la entrega por ahí.</p>
+    </div>
   </div>
 </dialog>
 
+<!-- ============ +18 ============ -->
 <dialog id="age" aria-labelledby="age-title">
   <div id="age-ask">
+    <p class="age-badge">+18</p>
     <h2 id="age-title">¿Tenés 18 años o más?</h2>
     <p>Esta página vende productos con nicotina y es solo para mayores de edad.</p>
-    <div class="actions">
+    <div class="age-actions">
       <button class="btn primary" id="age-yes" type="button">Sí, tengo 18 o más</button>
       <button class="btn ghost" id="age-no" type="button">No</button>
     </div>
   </div>
   <div id="age-denied" hidden>
+    <p class="age-badge">+18</p>
     <h2>No podés entrar</h2>
     <p>Esta página es solo para mayores de 18 años.</p>
   </div>
 </dialog>
 
-<script>
-(function () {
-  // ================= CONFIGURACIÓN =================
-  var WHATSAPP = "5491166634064";   // +54 9 11 6663-4064
-  var STORE = "Vape House Pilar";
-  var MAX_POR_PRODUCTO = 99;        // tope por modelo cuando no se carga "units"
-
-  // Cómo cargar cada producto:
-  //   units:   cantidad real en stock (número). Si es null se muestra solo "Disponible".
-  //   stock:   false = marcar "Sin stock".
-  //   flavors: lista de sabores sugeridos, ej: ["Strawberry Kiwi", "Blue Razz Ice"]. Si está vacía, el cliente escribe el sabor.
-  //   img:     foto del vape ("fotos/ice-king.jpg" o una imagen en base64). Si está vacío se muestra una ilustración.
-  function P(brand, name, puffs, price) {
-    return { brand: brand, name: name, puffs: puffs, price: price, stock: true, units: null, flavors: [], img: "" };
-  }
-  var PRODUCTS = [
-    P("Elfbar", "Ice King", 40000, 25000),
-    P("Elfbar", "Trio", 40000, 26500),
-    P("Elfbar", "30k", 30000, 22500),
-    P("Elfbar", "15k", 15000, 19000),
-    P("Elfbar", "Summer", 40000, 25000),
-    P("Elfbar", "Duke", 35000, 24500),
-    P("Ignite", "Mix", 40000, 28000),
-    P("Ignite", "Sweet", 40000, 28000),
-    P("Ignite", "V150", null, 20500),
-    P("Ignite", "V155", null, 21500),
-    P("Ignite", "V250", null, 25000),
-    P("Ignite", "V300", null, 26500),
-    P("Ignite", "V400 Ice", null, 28000),
-    P("Reing Bar", "50k", 50000, 24000)
-  ].map(function (p, i) { p.id = "p" + i; return p; });
-  var BRAND_COLOR = { "Elfbar": "#a899d6", "Ignite": "#c79ad1", "Reing Bar": "#8aa2e0" };
-  // =================================================
-
-  var $ = function (s) { return document.querySelector(s); };
-  var fmt = function (n) { return "$" + n.toLocaleString("es-AR"); };
-  var wa = function (t) { return "https://wa.me/" + WHATSAPP + "?text=" + encodeURIComponent(t); };
-  var esc = function (s) { return String(s).replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); };
-  var byId = {}; PRODUCTS.forEach(function (p) { byId[p.id] = p; });
-  var BRANDS = PRODUCTS.map(function (p) { return p.brand; }).filter(function (b, i, a) { return a.indexOf(b) === i; });
-
-  var lines = [], uid = 0;
-  var brandFilter = "Todos", onlyAvail = false;
-
-  document.querySelectorAll("[data-wa]").forEach(function (a) { a.href = wa(a.getAttribute("data-wa")); });
-
-  // ---------- helpers de stock y carrito ----------
-  function avail(p) { return p.stock !== false && (p.units == null || p.units > 0); }
-  function maxOf(p) { return p.units == null ? MAX_POR_PRODUCTO : p.units; }
-  function qtyOf(pid) { return lines.reduce(function (s, l) { return s + (l.pid === pid ? l.qty : 0); }, 0); }
-  function lastLine(pid) { for (var i = lines.length - 1; i >= 0; i--) if (lines[i].pid === pid) return lines[i]; }
-  function totals() {
-    var n = 0, t = 0;
-    lines.forEach(function (l) { n += l.qty; t += l.qty * byId[l.pid].price; });
-    return { n: n, t: t };
-  }
-
-  // ---------- foto o ilustración ----------
-  function art(p) {
-    if (p.img) return '<img src="' + esc(p.img) + '" alt="' + esc(p.brand + " " + p.name) + '" loading="lazy">';
-    var c = BRAND_COLOR[p.brand] || "#a899d6";
-    return '<svg viewBox="0 0 56 76" aria-hidden="true"><rect x="22" y="3" width="12" height="11" rx="3" fill="#2c2639"/>' +
-      '<rect x="14" y="12" width="28" height="60" rx="10" fill="' + c + '"/>' +
-      '<rect x="33" y="12" width="9" height="60" rx="4.5" fill="#000" opacity=".22"/>' +
-      '<rect x="18" y="18" width="4" height="46" rx="2" fill="#fff" opacity=".28"/>' +
-      '<circle cx="28" cy="58" r="3" fill="#000" opacity=".45"/></svg>';
-  }
-
-  // ---------- catálogo ----------
-  function renderChips() {
-    $("#chips").innerHTML = ["Todos"].concat(BRANDS).map(function (b) {
-      return '<button class="chip" type="button" data-brand="' + b + '" aria-pressed="' + (b === brandFilter) + '">' + b + "</button>";
-    }).join("");
-  }
-
-  function ctl(p) {
-    var q = qtyOf(p.id), name = p.brand + " " + p.name;
-    if (!avail(p)) {
-      return '<a class="ask" target="_blank" rel="noopener" href="' + wa("Hola! ¿Cuándo vuelve a haber stock de " + name + "?") + '">Consultar</a>';
-    }
-    if (q > 0) {
-      return '<div class="stepper"><button type="button" data-act="dec" data-id="' + p.id + '" aria-label="Quitar uno de ' + name + '">−</button><output aria-label="Cantidad">' + q +
-        '</output><button type="button" data-act="inc" data-id="' + p.id + '" aria-label="Sumar uno de ' + name + '"' + (q >= maxOf(p) ? " disabled" : "") + ">+</button></div>";
-    }
-    return '<button class="add" type="button" data-act="add" data-id="' + p.id + '" aria-label="Agregar ' + name + ' al pedido">Agregar</button>';
-  }
-
-  function row(p) {
-    var status = avail(p)
-      ? '<span class="status ok">' + (p.units != null ? "Stock: " + p.units.toLocaleString("es-AR") : "Disponible") + "</span>"
-      : '<span class="status no">Sin stock</span>';
-    var meta = (p.puffs ? "<span>" + p.puffs.toLocaleString("es-AR") + " pitadas</span>" : "") + status;
-    return '<li class="row" data-row="' + p.id + '"><div class="photo">' + art(p) + '</div><div><h4 class="pname">' + p.name + '</h4><div class="pmeta">' + meta +
-      '</div></div><div class="pright"><span class="price">' + fmt(p.price) + '</span><div class="ctl">' + ctl(p) + "</div></div></li>";
-  }
-
-  function renderCatalog() {
-    var html = "";
-    BRANDS.forEach(function (b) {
-      if (brandFilter !== "Todos" && brandFilter !== b) return;
-      var items = PRODUCTS.filter(function (p) { return p.brand === b && (!onlyAvail || avail(p)); });
-      if (!items.length) return;
-      html += '<div class="brand"><h3>' + b + '</h3><ul class="list">' + items.map(row).join("") + "</ul></div>";
-    });
-    $("#catalog").innerHTML = html || '<p class="empty">No hay productos disponibles con ese filtro. Probá con otra marca.</p>';
-  }
-
-  function updateRow(pid) {
-    var r = document.querySelector('[data-row="' + pid + '"] .ctl');
-    if (r) r.innerHTML = ctl(byId[pid]);
-  }
-
-  // ---------- pedido ----------
-  function val(id) { return $(id).value.trim(); }
-
-  function missing() {
-    var m = [];
-    if (!val("#c-name")) m.push({ label: "nombre", el: $("#c-name") });
-    if (!val("#c-addr")) m.push({ label: "dirección", el: $("#c-addr") });
-    if (!/^\S+@\S+\.\S+$/.test(val("#c-mail"))) m.push({ label: "mail", el: $("#c-mail") });
-    var noFlavor = lines.filter(function (l) { return !l.flavor.trim(); });
-    if (noFlavor.length) m.push({ label: "sabor de cada vape", el: $("#f-" + noFlavor[0].uid) });
-    return m;
-  }
-
-  function message() {
-    var items = lines.map(function (l) {
-      var p = byId[l.pid];
-      return "- " + l.qty + " x " + p.brand + " " + p.name + ", sabor " + (l.flavor.trim() || "(sin indicar)") + " (" + fmt(l.qty * p.price) + ")";
-    });
-    var note = val("#note");
-    return "Hola! Acá te adjunto mi solicitud para este pedido:\n\n" +
-      "*Datos*\nNombre: " + val("#c-name") + "\nDirección: " + val("#c-addr") + "\nMail: " + val("#c-mail") + "\n\n" +
-      "*Pedido*\n" + items.join("\n") + "\n\n" +
-      "*Total: " + fmt(totals().t) + "*" +
-      (note ? "\n\nAclaraciones: " + note : "");
-  }
-
-  function updateSend() {
-    var s = $("#send");
-    if (!lines.length) return;
-    if (missing().length) { s.href = "#"; s.setAttribute("aria-disabled", "true"); }
-    else { s.href = wa(message()); s.removeAttribute("aria-disabled"); $("#hint").textContent = ""; }
-  }
-
-  function itemHtml(l) {
-    var p = byId[l.pid], name = p.brand + " " + p.name;
-    var dl = "";
-    if (p.flavors.length) {
-      dl = '<datalist id="fl-' + p.id + '">' + p.flavors.map(function (f) { return '<option value="' + esc(f) + '">'; }).join("") + "</datalist>";
-    }
-    return '<div class="item"><div><div class="iname">' + name + '</div><div class="iunit">' + fmt(p.price) + ' c/u</div></div>' +
-      '<div class="iline">' + fmt(l.qty * p.price) + "</div>" +
-      '<div class="field"><label for="f-' + l.uid + '">Sabor</label><input type="text" id="f-' + l.uid + '" data-flavor="' + l.uid + '"' + (p.flavors.length ? ' list="fl-' + p.id + '"' : "") +
-      ' value="' + esc(l.flavor) + '" placeholder="Ej: Strawberry Kiwi" autocomplete="off">' + dl + "</div>" +
-      '<div class="stepper"><button type="button" data-act="ldec" data-line="' + l.uid + '" aria-label="Quitar uno de ' + name + '">−</button><output aria-label="Cantidad">' + l.qty +
-      '</output><button type="button" data-act="linc" data-line="' + l.uid + '" aria-label="Sumar uno de ' + name + '"' + (qtyOf(p.id) >= maxOf(p) ? " disabled" : "") + ">+</button></div>" +
-      '<button class="link" type="button" data-act="ldup" data-line="' + l.uid + '">Sumar otro sabor</button></div>';
-  }
-
-  function renderCart() {
-    var tt = totals();
-    $("#count").textContent = tt.n;
-    $("#bar").hidden = tt.n === 0;
-    document.body.classList.toggle("has-bar", tt.n > 0);
-    $("#bar-label").textContent = "Ver pedido (" + tt.n + ")";
-    $("#bar-total").textContent = fmt(tt.t);
-    $("#live").textContent = tt.n + (tt.n === 1 ? " producto" : " productos") + " en tu pedido";
-
-    if (!lines.length) {
-      $("#cart-items").innerHTML = '<p class="cart-empty">Tu pedido está vacío. Sumá productos desde la lista.</p>';
-      $("#cart-foot").hidden = true;
-      return;
-    }
-    $("#cart-items").innerHTML = lines.map(itemHtml).join("");
-    $("#cart-foot").hidden = false;
-    $("#cart-total").textContent = fmt(tt.t);
-    updateSend();
-  }
-
-  function findLine(u) { for (var i = 0; i < lines.length; i++) if (lines[i].uid === +u) return i; return -1; }
-
-  document.addEventListener("click", function (e) {
-    var chip = e.target.closest("[data-brand]");
-    if (chip) { brandFilter = chip.getAttribute("data-brand"); renderChips(); renderCatalog(); return; }
-
-    var b = e.target.closest("[data-act]");
-    if (!b) return;
-    var act = b.getAttribute("data-act"), pid = b.getAttribute("data-id"), lu = b.getAttribute("data-line");
-    var focusSel = null, idx, l, p;
-
-    if (lu !== null) {
-      idx = findLine(lu); if (idx < 0) return;
-      l = lines[idx]; p = byId[l.pid]; pid = l.pid;
-      if (act === "linc" && qtyOf(pid) < maxOf(p)) l.qty++;
-      if (act === "ldec") { l.qty--; if (l.qty <= 0) lines.splice(idx, 1); }
-      if (act === "ldup" && qtyOf(pid) < maxOf(p)) { var nl = { uid: ++uid, pid: pid, flavor: "", qty: 1 }; lines.splice(idx + 1, 0, nl); focusSel = "#f-" + nl.uid; }
-      if (!focusSel) focusSel = (findLine(lu) >= 0) ? '#cart [data-line="' + lu + '"][data-act="' + act + '"]' : "#cart-title";
-    } else {
-      p = byId[pid];
-      if (act === "add" && !qtyOf(pid)) lines.push({ uid: ++uid, pid: pid, flavor: "", qty: 1 });
-      if (act === "inc" && qtyOf(pid) < maxOf(p)) lastLine(pid).qty++;
-      if (act === "dec") { l = lastLine(pid); if (l) { l.qty--; if (l.qty <= 0) lines.splice(lines.indexOf(l), 1); } }
-      focusSel = '[data-row="' + pid + '"] [data-act="' + (qtyOf(pid) ? "inc" : "add") + '"]';
-    }
-    updateRow(pid);
-    renderCart();
-    var next = focusSel && document.querySelector(focusSel);
-    if (next) next.focus();
-  });
-
-  document.addEventListener("input", function (e) {
-    var f = e.target.getAttribute && e.target.getAttribute("data-flavor");
-    if (f) { var i = findLine(f); if (i >= 0) lines[i].flavor = e.target.value; }
-    if (e.target.closest && e.target.closest("#cart")) updateSend();
-  });
-
-  $("#only").addEventListener("change", function (e) { onlyAvail = e.target.checked; renderCatalog(); });
-
-  $("#send").addEventListener("click", function (e) {
-    var m = missing();
-    if (m.length) {
-      e.preventDefault();
-      $("#hint").textContent = "Falta completar: " + m.map(function (x) { return x.label; }).join(", ") + ".";
-      if (m[0].el) m[0].el.focus();
-    }
-  });
-
-  // ---------- hoja de pedido ----------
-  var cartDlg = $("#cart");
-  function openCart() { renderCart(); cartDlg.showModal(); }
-  $("#open-cart").addEventListener("click", openCart);
-  $("#bar-open").addEventListener("click", openCart);
-  $("#cart-close").addEventListener("click", function () { cartDlg.close(); });
-  cartDlg.addEventListener("click", function (e) { if (e.target === cartDlg) cartDlg.close(); });
-
-  // ---------- verificación de edad ----------
-  var gate = $("#age"), ok = false;
-  try { ok = sessionStorage.getItem("vhp-18") === "1"; } catch (err) {}
-  gate.addEventListener("cancel", function (e) { e.preventDefault(); });
-  $("#age-yes").addEventListener("click", function () {
-    try { sessionStorage.setItem("vhp-18", "1"); } catch (err) {}
-    gate.close();
-  });
-  $("#age-no").addEventListener("click", function () {
-    $("#age-ask").hidden = true;
-    $("#age-denied").hidden = false;
-  });
-
-  renderChips();
-  renderCatalog();
-  renderCart();
-  if (!ok) gate.showModal();
-})();
-</script>
 </body>
 </html>
