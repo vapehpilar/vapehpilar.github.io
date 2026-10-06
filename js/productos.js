@@ -6,7 +6,11 @@
 
 window.VHP_CONFIG = {
   whatsapp: "5491166634064", // +54 9 11 6663-4064
-  tienda: "Vape House Pilar"
+  tienda: "Vape House Pilar",
+  // Código de la cuenta de GoatCounter (analíticas). Vacío = no se cuentan visitas.
+  goatcounter: "vapehpilar",
+  // Panel secreto del dueño (5 toques en "hecho por buda" del pie).
+  panel: "buda-8q4x/"
 };
 
 /* Catálogo.

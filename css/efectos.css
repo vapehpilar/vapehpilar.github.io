@@ -1,0 +1,129 @@
+/* =========================================================
+   VHP · Efectos y animaciones
+   Todo se apaga si el dispositivo pide menos movimiento.
+   ========================================================= */
+
+/* ---------- Barra de progreso de lectura ---------- */
+.progress {
+  position: fixed; left: 0; top: 0; z-index: 70; height: 3px; width: 100%;
+  background: var(--grad); transform-origin: 0 50%; transform: scaleX(0);
+  pointer-events: none;
+}
+
+/* ---------- Entrada de la portada ---------- */
+.js .hero .eyebrow,
+.js .hero .lead,
+.js .hero .actions,
+.js .hero .stats { opacity: 0; transform: translateY(16px); }
+.js .hero.ready .eyebrow,
+.js .hero.ready .lead,
+.js .hero.ready .actions,
+.js .hero.ready .stats { opacity: 1; transform: none; transition: opacity .8s var(--ease), transform .8s var(--ease); }
+.js .hero.ready .lead { transition-delay: .45s; }
+.js .hero.ready .actions { transition-delay: .6s; }
+.js .hero.ready .stats { transition-delay: .75s; }
+
+.word { display: inline-block; overflow: hidden; vertical-align: bottom; padding-bottom: .06em; margin-bottom: -.06em; }
+.word > span { display: inline-block; transform: translateY(110%); }
+.hero.ready .word > span { transform: none; transition: transform .9s var(--ease); transition-delay: calc(.1s + var(--w) * 90ms); }
+.hero-title .grad .word > span { background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; background-size: 200% 100%; animation: shine 8s linear infinite; }
+
+.js .hero-art { opacity: 0; transform: scale(.92); }
+.hero.ready .hero-art { opacity: 1; transform: none; transition: opacity 1.2s var(--ease) .3s, transform 1.2s var(--ease) .3s; }
+
+/* ---------- Vapor que sube en la portada ---------- */
+.puffs { position: absolute; inset: 0; z-index: -1; pointer-events: none; overflow: hidden; }
+.puffs i {
+  position: absolute; bottom: -60px; width: var(--s); height: var(--s); border-radius: 50%;
+  background: radial-gradient(circle, rgba(199, 187, 240, .22), rgba(199, 187, 240, 0) 70%);
+  left: var(--x); animation: rise var(--d) linear infinite; animation-delay: var(--dl);
+}
+@keyframes rise {
+  0% { transform: translate3d(0, 0, 0) scale(.6); opacity: 0; }
+  15% { opacity: 1; }
+  100% { transform: translate3d(var(--dx), -120vh, 0) scale(1.8); opacity: 0; }
+}
+
+/* Parallax de los vapes flotantes */
+.hero-art .float { will-change: transform; }
+.hero-art .orb { transition: transform .4s var(--ease); }
+
+/* ---------- Tarjetas: brillo que sigue al cursor + inclinación ---------- */
+.card { transform-style: preserve-3d; }
+.card::after {
+  content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+  background: radial-gradient(260px circle at var(--mx, 50%) var(--my, 0%), rgba(255, 255, 255, .09), transparent 60%);
+  opacity: 0; transition: opacity .3s;
+}
+.card.lit::after { opacity: 1; }
+.card.tilt { transition: transform .12s linear, box-shadow .3s, border-color .3s; }
+
+/* ---------- Ondas al tocar botones ---------- */
+.btn, .add, .bar-btn, .chip, .cart-btn { position: relative; overflow: hidden; }
+.ripple {
+  position: absolute; border-radius: 50%; pointer-events: none;
+  background: currentColor; opacity: .22; transform: scale(0);
+  animation: ripple .6s var(--ease) forwards;
+}
+@keyframes ripple { to { transform: scale(1); opacity: 0; } }
+
+/* ---------- Producto que vuela al carrito ---------- */
+.fly {
+  position: fixed; z-index: 80; pointer-events: none; display: grid; place-items: center;
+  border-radius: 18px; filter: drop-shadow(0 16px 30px rgba(0, 0, 0, .6));
+}
+.fly img, .fly svg { width: 100%; height: 100%; object-fit: contain; }
+
+/* Chispas al agregar */
+.spark {
+  position: fixed; z-index: 81; width: 8px; height: 8px; border-radius: 50%; pointer-events: none;
+  background: var(--c, var(--violet-hi)); animation: spark .7s var(--ease) forwards;
+}
+@keyframes spark { to { transform: translate(var(--tx), var(--ty)) scale(0); opacity: 0; } }
+
+.cart-btn .n.pop { animation: numPop .5s var(--ease); }
+@keyframes numPop { 40% { transform: scale(1.5); background: var(--pink); } }
+
+/* ---------- Títulos de sección ---------- */
+.sec-head h2 { position: relative; display: inline-block; }
+.sec-head h2::after {
+  content: ""; position: absolute; left: 0; bottom: -10px; height: 3px; width: 64px; border-radius: 3px;
+  background: var(--grad); transform: scaleX(0); transform-origin: 0 50%; transition: transform .9s var(--ease) .2s;
+}
+.sec-head.in h2::after { transform: scaleX(1); }
+.js .sec-head .kicker { opacity: 0; letter-spacing: .4em; transition: opacity .8s var(--ease), letter-spacing .8s var(--ease); }
+.js .sec-head.in .kicker { opacity: 1; letter-spacing: .14em; }
+
+/* ---------- Íconos de beneficios con pulso suave ---------- */
+.perk-ic { position: relative; }
+.perk.in .perk-ic::after {
+  content: ""; position: absolute; inset: 0; border-radius: inherit; border: 1px solid var(--violet);
+  animation: ring 2.6s var(--ease) infinite;
+}
+@keyframes ring { 0% { transform: scale(1); opacity: .7; } 100% { transform: scale(1.7); opacity: 0; } }
+
+/* Números de los pasos que se llenan */
+.step-n { background-size: 200% 100%; transition: background-position 1.2s var(--ease); background-position: 100% 0; }
+.step.in .step-n { background-position: 0 0; }
+
+/* ---------- Botón de WhatsApp con latido ---------- */
+.fab::before {
+  content: ""; position: absolute; inset: 0; border-radius: 50%; background: #25d366; z-index: -1;
+  animation: beat 2.4s ease-out infinite;
+}
+@keyframes beat { 0% { transform: scale(1); opacity: .5; } 70%, 100% { transform: scale(1.6); opacity: 0; } }
+
+/* ---------- Cursor con halo (solo mouse) ---------- */
+.halo {
+  position: fixed; left: 0; top: 0; z-index: 1; width: 420px; height: 420px; margin: -210px 0 0 -210px;
+  border-radius: 50%; pointer-events: none; opacity: 0;
+  background: radial-gradient(circle, rgba(168, 153, 214, .10), transparent 65%);
+  transition: opacity .4s;
+}
+.halo.on { opacity: 1; }
+
+@media (prefers-reduced-motion: reduce) {
+  .progress, .puffs, .halo, .ripple, .spark, .fly { display: none !important; }
+  .word > span, .js .hero .eyebrow, .js .hero .lead, .js .hero .actions, .js .hero .stats, .js .hero-art { opacity: 1 !important; transform: none !important; }
+  .js .sec-head .kicker { opacity: 1; letter-spacing: .14em; }
+}

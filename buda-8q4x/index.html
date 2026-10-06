@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<meta name="referrer" content="no-referrer">
+<title>Panel VHP</title>
+<meta name="theme-color" content="#07060a">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%2307060a'/%3E%3Ctext x='32' y='42' font-family='Arial Black,sans-serif' font-size='24' font-weight='900' text-anchor='middle' fill='%23a899d6'%3EVHP%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=Unbounded:wght@600;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="panel.css">
+<script src="../js/productos.js" defer></script>
+<script src="panel.js" defer></script>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap top-in">
+    <a class="logo" href="../" title="Volver a la tienda"><span class="mark">VHP</span><span class="tag">Panel</span></a>
+    <div class="top-actions" id="top-actions" hidden>
+      <button class="ghost-btn" type="button" id="refresh" aria-label="Actualizar datos">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11a8 8 0 1 0-2.3 5.7M20 4v7h-7"/></svg>
+      </button>
+      <button class="ghost-btn" type="button" id="logout">Salir</button>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- ============ ACCESO ============ -->
+  <section class="login" id="login">
+    <div class="login-card">
+      <div class="lock" aria-hidden="true">
+        <svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="3"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>
+      </div>
+      <h1>Hola, Buda</h1>
+      <p class="muted">Este panel es privado. Ingresá tu clave de GoatCounter para ver las analíticas.</p>
+      <form id="login-form" autocomplete="off">
+        <label for="key">Clave (API key)</label>
+        <div class="key-row">
+          <input type="password" id="key" spellcheck="false" autocapitalize="off" placeholder="Pegá tu clave acá" required>
+          <button type="button" class="eye" id="eye" aria-label="Mostrar clave">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
+        </div>
+        <label class="check"><input type="checkbox" id="remember" checked> Recordar en este dispositivo</label>
+        <button class="btn" type="submit" id="enter">Entrar</button>
+        <p class="error" id="login-error" role="alert"></p>
+      </form>
+      <details class="help">
+        <summary>¿Dónde saco la clave?</summary>
+        <ol>
+          <li>Entrá a <a href="https://www.goatcounter.com" target="_blank" rel="noopener">goatcounter.com</a> con tu cuenta.</li>
+          <li>Andá a <strong>Settings → API</strong> (arriba a la derecha, tu usuario).</li>
+          <li>Tocá <strong>New API key</strong>, marcá solo <strong>Read statistics</strong> y guardá.</li>
+          <li>Copiá la clave y pegala acá.</li>
+        </ol>
+        <p class="muted small">La clave queda guardada solo en tu navegador. Nunca se sube a la página ni a GitHub.</p>
+      </details>
+    </div>
+  </section>
+
+  <!-- ============ PANEL ============ -->
+  <section class="dash" id="dash" hidden>
+    <div class="dash-head">
+      <div>
+        <p class="kicker">Analíticas</p>
+        <h1>Visitas de la tienda</h1>
+        <p class="muted" id="range-label"></p>
+      </div>
+      <div class="ranges" role="group" aria-label="Período">
+        <button type="button" data-days="7">7 días</button>
+        <button type="button" data-days="30" aria-pressed="true">30 días</button>
+        <button type="button" data-days="90">90 días</button>
+      </div>
+    </div>
+
+    <div class="tiles">
+      <article class="tile hero-tile">
+        <p class="t-label">Visitantes</p>
+        <p class="t-value" id="t-visits">–</p>
+        <p class="t-delta" id="t-delta"></p>
+        <p class="t-all">Total histórico: <strong id="t-all">–</strong></p>
+      </article>
+      <article class="tile">
+        <p class="t-label">Hoy</p>
+        <p class="t-value" id="t-today">–</p>
+      </article>
+      <article class="tile">
+        <p class="t-label">Pedidos enviados</p>
+        <p class="t-value" id="t-orders">–</p>
+      </article>
+      <article class="tile">
+        <p class="t-label">Productos agregados</p>
+        <p class="t-value" id="t-adds">–</p>
+      </article>
+      <article class="tile">
+        <p class="t-label">Consultas por WhatsApp</p>
+        <p class="t-value" id="t-wa">–</p>
+      </article>
+    </div>
+
+    <article class="panel chart-panel">
+      <div class="panel-head">
+        <h2>Visitantes por día</h2>
+        <button type="button" class="link-btn" id="toggle-table" aria-expanded="false">Ver tabla</button>
+      </div>
+      <div class="chart" id="chart" role="img" aria-label="Gráfico de visitantes por día"></div>
+      <div class="tip" id="tip" role="status" hidden></div>
+      <div class="table-wrap" id="table-wrap" hidden>
+        <table>
+          <thead><tr><th scope="col">Día</th><th scope="col">Visitantes</th></tr></thead>
+          <tbody id="table-body"></tbody>
+        </table>
+      </div>
+    </article>
+
+    <div class="grid-2">
+      <article class="panel">
+        <h2>Productos más agregados</h2>
+        <ol class="rank" id="l-products"></ol>
+      </article>
+      <article class="panel">
+        <h2>De dónde llegan</h2>
+        <ol class="rank" id="l-refs"></ol>
+      </article>
+      <article class="panel">
+        <h2>Ubicación</h2>
+        <ol class="rank" id="l-locations"></ol>
+      </article>
+      <article class="panel">
+        <h2>Dispositivos</h2>
+        <ol class="rank" id="l-systems"></ol>
+      </article>
+    </div>
+
+    <article class="panel settings">
+      <h2>Ajustes</h2>
+      <label class="switch">
+        <input type="checkbox" id="skip">
+        <span class="track" aria-hidden="true"></span>
+        <span>No contar mis propias visitas en este dispositivo</span>
+      </label>
+      <p class="muted small">Activalo en cada celular o compu que uses, así tus entradas no inflan los números.</p>
+      <p class="small"><a id="gc-link" href="#" target="_blank" rel="noopener">Abrir GoatCounter completo →</a></p>
+    </article>
+
+    <p class="muted small foot-note" id="updated"></p>
+  </section>
+
+  <div class="loading" id="loading" hidden><span></span><span></span><span></span></div>
+</main>
+
+</body>
+</html>

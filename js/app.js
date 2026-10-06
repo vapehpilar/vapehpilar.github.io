@@ -119,6 +119,37 @@
 
   // ---------- WhatsApp en links fijos ----------
   $$("[data-wa]").forEach(function (a) { a.href = wa(a.getAttribute("data-wa")); });
+
+  // ---------- analíticas (GoatCounter) ----------
+  // Cuenta visitas sin cookies. Las ve solo el dueño, desde el panel secreto.
+  function track(path, title) {
+    if (window.goatcounter && window.goatcounter.count) {
+      try { window.goatcounter.count({ path: path, title: title || path, event: true }); } catch (e) {}
+    }
+  }
+  if (CFG.goatcounter) {
+    var gc = document.createElement("script");
+    gc.async = true;
+    gc.src = "https://gc.zgo.at/count.js";
+    gc.setAttribute("data-goatcounter", "https://" + CFG.goatcounter + ".goatcounter.com/count");
+    document.head.appendChild(gc);
+  }
+  document.addEventListener("click", function (e) {
+    var a = e.target.closest && e.target.closest("[data-wa]");
+    if (a) track("consulta-whatsapp", "Consulta por WhatsApp");
+  });
+
+  // Acceso secreto al panel: 5 toques seguidos en la firma del pie.
+  (function () {
+    var credit = $(".credit"), taps = 0, timer;
+    if (!credit || !CFG.panel) return;
+    credit.addEventListener("click", function () {
+      taps++;
+      clearTimeout(timer);
+      timer = setTimeout(function () { taps = 0; }, 1500);
+      if (taps >= 5) location.href = CFG.panel;
+    });
+  })();
   $("#year").textContent = new Date().getFullYear();
   $("#stat-models").textContent = PRODUCTS.length;
   $("#stat-brands").textContent = BRANDS.length;
@@ -258,6 +289,8 @@
     renderCart();
     refreshBadges();
     bump();
+    track("agregado/" + slug(p.marca + " " + p.nombre), "Agregado: " + p.marca + " " + p.nombre);
+    document.dispatchEvent(new CustomEvent("vhp:add", { detail: { pid: p.id, color: brandColor(p) } }));
     toast(pick.qty + " × " + p.marca + " " + p.nombre + (flavor ? " · " + flavor : ""), brandColor(p));
     if (lastTrigger && document.contains(lastTrigger)) lastTrigger.focus({ preventScroll: true });
   });
@@ -397,7 +430,11 @@
       m.forEach(function (x) { x.el.classList.add("bad"); });
       $("#hint").textContent = "Falta completar: " + m.map(function (x) { return x.label; }).join(", ") + ".";
       m[0].el.focus();
+      return;
     }
+    var tt = totals();
+    track("pedido-enviado", "Pedido enviado por WhatsApp");
+    track("pedido-unidades/" + tt.n, "Pedido de " + tt.n + (tt.n === 1 ? " vape" : " vapes"));
   });
 
   // ---------- clicks globales ----------
