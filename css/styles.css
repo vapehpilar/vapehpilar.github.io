@@ -2,6 +2,10 @@
    VHP · Vape House Pilar · Estilos
    ========================================================= */
 
+/* Fuentes alojadas en el sitio (sin depender de Google Fonts) */
+@font-face { font-family: "Hanken Grotesk"; font-style: normal; font-weight: 400 700; font-display: swap; src: url("../fonts/hanken-grotesk.woff2") format("woff2"); }
+@font-face { font-family: "Unbounded"; font-style: normal; font-weight: 500 800; font-display: swap; src: url("../fonts/unbounded.woff2") format("woff2"); }
+
 :root {
   --bg: #07060a;
   --bg-2: #0d0b13;
