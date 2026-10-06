@@ -21,6 +21,8 @@ Si falta alguna foto, ese producto muestra la ilustración de siempre.
 | Reing Bar 50k    | `reing-bar-50k.webp`    |
 
 Consejos:
+- Opcional: una versión chica de 400x480 con `-sm` al final (ej: `elfbar-trio-sm.webp`)
+  hace que cargue más rápido en celulares. Si no está, se usa la grande.
 - Mejor fotos cuadradas o verticales, con fondo transparente o liso. El formato por defecto es `.webp`.
 - Si tu foto es `.jpg` o `.png`, cambiá el nombre en `js/productos.js`
   agregando `img: "img/nombre.png"` a ese producto.

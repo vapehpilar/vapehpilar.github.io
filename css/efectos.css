@@ -11,20 +11,20 @@
 }
 
 /* ---------- Entrada de la portada ---------- */
+/* El texto principal (.lead) no se oculta: es lo primero que se pinta. */
 .js .hero .eyebrow,
-.js .hero .lead,
 .js .hero .actions,
 .js .hero .stats { opacity: 0; transform: translateY(16px); }
+.js .hero .lead { transform: translateY(10px); }
 .js .hero.ready .eyebrow,
 .js .hero.ready .lead,
 .js .hero.ready .actions,
 .js .hero.ready .stats { opacity: 1; transform: none; transition: opacity .8s var(--ease), transform .8s var(--ease); }
-.js .hero.ready .lead { transition-delay: .45s; }
-.js .hero.ready .actions { transition-delay: .6s; }
-.js .hero.ready .stats { transition-delay: .75s; }
+.js .hero.ready .actions { transition-delay: .5s; }
+.js .hero.ready .stats { transition-delay: .65s; }
 
 .word { display: inline-block; overflow: hidden; vertical-align: bottom; padding-bottom: .06em; margin-bottom: -.06em; }
-.word > span { display: inline-block; transform: translateY(110%); }
+.word > span { display: inline-block; transform: translateY(70%); }
 .hero.ready .word > span { transform: none; transition: transform .9s var(--ease); transition-delay: calc(.1s + var(--w) * 90ms); }
 .hero-title .grad .word > span { background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; background-size: 200% 100%; animation: shine 8s linear infinite; }
 

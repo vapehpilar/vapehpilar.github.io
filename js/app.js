@@ -60,14 +60,19 @@
   document.addEventListener("error", function (e) {
     var el = e.target, pid = el && el.getAttribute && el.getAttribute("data-photo");
     if (!pid) return;
+    // Si falta la versión chica (-sm), se usa la foto grande antes de rendirse.
+    if (el.hasAttribute("srcset")) { el.removeAttribute("srcset"); el.src = el.getAttribute("src"); return; }
     noPhoto[pid] = true;
     el.outerHTML = drawing(byId[pid]);
   }, true);
 
-  function art(p) {
+  // sizes: ancho con el que se muestra la foto, para que el navegador elija la versión justa.
+  var CARD_SIZES = "(min-width: 1080px) 260px, (min-width: 860px) 31vw, 46vw";
+  function art(p, sizes) {
     var src = p.id && !noPhoto[p.id] ? photoOf(p) : "";
-    if (src) return '<img src="' + esc(src) + '" alt="' + esc(p.marca + " " + p.nombre) + '" data-photo="' + p.id + '" loading="lazy">';
-    return drawing(p);
+    if (!src) return drawing(p);
+    var set = p.img ? "" : ' srcset="' + esc(src.replace(/\.webp$/, "-sm.webp")) + " 400w, " + esc(src) + ' 600w" sizes="' + (sizes || CARD_SIZES) + '"';
+    return '<img src="' + esc(src) + '"' + set + ' width="600" height="720" alt="' + esc(p.marca + " " + p.nombre) + '" data-photo="' + p.id + '" loading="lazy" decoding="async">';
   }
 
   function drawing(p) {
@@ -128,11 +133,16 @@
     }
   }
   if (CFG.goatcounter) {
-    var gc = document.createElement("script");
-    gc.async = true;
-    gc.src = "https://gc.zgo.at/count.js";
-    gc.setAttribute("data-goatcounter", "https://" + CFG.goatcounter + ".goatcounter.com/count");
-    document.head.appendChild(gc);
+    // Se carga cuando la página ya terminó, para no competir con lo que ve el cliente.
+    var loadGc = function () {
+      var gc = document.createElement("script");
+      gc.async = true;
+      gc.src = "https://gc.zgo.at/count.js";
+      gc.setAttribute("data-goatcounter", "https://" + CFG.goatcounter + ".goatcounter.com/count");
+      document.head.appendChild(gc);
+    };
+    if (document.readyState === "complete") loadGc();
+    else window.addEventListener("load", function () { setTimeout(loadGc, 300); });
   }
   document.addEventListener("click", function (e) {
     var a = e.target.closest && e.target.closest("[data-wa]");
@@ -258,7 +268,7 @@
     pick = { pid: pid, qty: 1 };
     lastTrigger = trigger || null;
     $(".pick-head", pickDlg).style.setProperty("--c", brandColor(p));
-    $("#pick-art").innerHTML = art(p);
+    $("#pick-art").innerHTML = art(p, "100px");
     $("#pick-brand").textContent = p.marca;
     $("#pick-title").textContent = p.nombre;
     $("#pick-meta").textContent = p.pitadas ? num(p.pitadas) + " pitadas · Descartable" : "Descartable";
@@ -301,7 +311,7 @@
   function itemHtml(l, i) {
     var p = byId[l.pid];
     return '<li class="item" style="--c:' + brandColor(p) + '">' +
-      '<div class="item-art">' + art(p) + "</div>" +
+      '<div class="item-art">' + art(p, "60px") + "</div>" +
       '<div><p class="item-name">' + esc(p.marca + " " + p.nombre) + "</p>" +
       '<p class="item-flavor">' + (l.flavor ? "Sabor: " + esc(l.flavor) : "Sabor a confirmar") + "</p></div>" +
       '<p class="item-line">' + fmt(l.qty * p.precio) + "</p>" +
@@ -473,11 +483,12 @@
     b.classList.add("bump");
   }
 
-  var top = $("#top"), fab = $(".fab"), hero = $(".hero");
+  var top = $("#top"), fab = $(".fab"), hero = $(".hero"), heroH = hero.offsetHeight;
+  window.addEventListener("resize", function () { heroH = hero.offsetHeight; }, { passive: true });
   function onScroll() {
     top.classList.toggle("scrolled", window.scrollY > 8);
     // El botón flotante aparece recién después de la portada (ahí ya hay botones de WhatsApp).
-    fab.classList.toggle("away", window.scrollY < hero.offsetHeight * 0.6);
+    fab.classList.toggle("away", window.scrollY < heroH * 0.6);
   }
   window.addEventListener("scroll", onScroll, { passive: true });
   onScroll();
