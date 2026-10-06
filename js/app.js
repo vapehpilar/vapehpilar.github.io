@@ -62,7 +62,7 @@
   function slug(s) { return norm(s).replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, ""); }
   function photoOf(p) {
     if (p.img === "") return "";
-    return p.img || "img/" + slug(p.marca + " " + p.nombre) + ".jpg";
+    return p.img || "img/" + slug(p.marca + " " + p.nombre) + ".webp";
   }
   // Si la foto no existe (o no carga) se reemplaza por la ilustración.
   document.addEventListener("error", function (e) {

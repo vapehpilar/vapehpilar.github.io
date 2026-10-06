@@ -36,7 +36,7 @@ window.VHP_SABORES = [
      sabores: ["Sabor 1", "Sabor 2"]  → reemplaza la lista por defecto en ese modelo.
      img: "img/otra-foto.png"         → foto con otro nombre o formato.
                                         Por defecto cada producto busca su foto en img/
-                                        (ej: img/elfbar-ice-king.jpg). Si no está, se dibuja
+                                        (ej: img/elfbar-ice-king.webp). Si no está, se dibuja
                                         una ilustración. img: "" fuerza la ilustración.
      etiqueta: "Nuevo"                → cartelito sobre la tarjeta. */
 window.VHP_PRODUCTOS = [

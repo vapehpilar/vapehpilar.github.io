@@ -5,24 +5,24 @@ Si falta alguna foto, ese producto muestra la ilustración de siempre.
 
 | Producto         | Nombre del archivo     |
 |------------------|------------------------|
-| Elfbar Ice King  | `elfbar-ice-king.jpg`  |
-| Elfbar Trio      | `elfbar-trio.jpg`      |
-| Elfbar 30k       | `elfbar-30k.jpg`       |
-| Elfbar 15k       | `elfbar-15k.jpg`       |
-| Elfbar Summer    | `elfbar-summer.jpg`    |
-| Elfbar Duke      | `elfbar-duke.jpg`      |
-| Ignite Mix       | `ignite-mix.jpg`       |
-| Ignite Sweet     | `ignite-sweet.jpg`     |
-| Ignite V150      | `ignite-v150.jpg`      |
-| Ignite V155      | `ignite-v155.jpg`      |
-| Ignite V250      | `ignite-v250.jpg`      |
-| Ignite V300      | `ignite-v300.jpg`      |
-| Ignite V400 Ice  | `ignite-v400-ice.jpg`  |
-| Reing Bar 50k    | `reing-bar-50k.jpg`    |
+| Elfbar Ice King  | `elfbar-ice-king.webp`  |
+| Elfbar Trio      | `elfbar-trio.webp`      |
+| Elfbar 30k       | `elfbar-30k.webp`       |
+| Elfbar 15k       | `elfbar-15k.webp`       |
+| Elfbar Summer    | `elfbar-summer.webp`    |
+| Elfbar Duke      | `elfbar-duke.webp`      |
+| Ignite Mix       | `ignite-mix.webp`       |
+| Ignite Sweet     | `ignite-sweet.webp`     |
+| Ignite V150      | `ignite-v150.webp`      |
+| Ignite V155      | `ignite-v155.webp`      |
+| Ignite V250      | `ignite-v250.webp`      |
+| Ignite V300      | `ignite-v300.webp`      |
+| Ignite V400 Ice  | `ignite-v400-ice.webp`  |
+| Reing Bar 50k    | `reing-bar-50k.webp`    |
 
 Consejos:
-- Mejor fotos cuadradas o verticales, con fondo transparente (PNG) o liso.
-- Si tu foto es `.png` o `.webp`, cambiá el nombre en `js/productos.js`
+- Mejor fotos cuadradas o verticales, con fondo transparente o liso. El formato por defecto es `.webp`.
+- Si tu foto es `.jpg` o `.png`, cambiá el nombre en `js/productos.js`
   agregando `img: "img/nombre.png"` a ese producto.
-- Si agregás un producto nuevo, el nombre es `marca-modelo.jpg` en minúsculas
+- Si agregás un producto nuevo, el nombre es `marca-modelo.webp` en minúsculas
   y con guiones en lugar de espacios.
