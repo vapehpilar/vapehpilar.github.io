@@ -267,10 +267,11 @@ h2 { font: 700 clamp(1.7rem, 5.5vw, 2.6rem)/1.1 var(--display); letter-spacing: 
 .facts a { text-decoration: none; color: var(--violet-hi); }
 
 /* ---------- Footer ---------- */
-.foot { border-top: 1px solid var(--line); padding: 34px 0 44px; color: var(--muted); font-size: .9rem; }
+.foot { border-top: 1px solid var(--line); padding: 34px 0 calc(92px + env(safe-area-inset-bottom, 0px)); color: var(--muted); font-size: .9rem; }
 .foot-in { display: grid; gap: 18px; }
 .foot .logo-mark { font-size: 1.6rem; margin-bottom: 4px; display: inline-block; }
 .legal p + p { margin-top: 4px; }
+.credit { margin-top: 26px; text-align: center; font-size: .62rem; letter-spacing: .14em; text-transform: uppercase; color: var(--faint); opacity: .45; }
 .legal strong { display: inline-grid; place-items: center; min-width: 34px; height: 22px; margin-right: 6px; border-radius: 6px; border: 1px solid var(--danger); color: var(--danger); font-size: .75rem; }
 
 /* ---------- FAB WhatsApp ---------- */
