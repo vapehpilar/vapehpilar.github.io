@@ -208,7 +208,7 @@ h2 { font: 700 clamp(1.7rem, 5.5vw, 2.6rem)/1.1 var(--display); letter-spacing: 
     linear-gradient(180deg, var(--surface-2), var(--surface));
 }
 .card-art svg { width: 44%; height: auto; filter: drop-shadow(0 18px 22px rgba(0,0,0,.55)); transition: transform .45s var(--ease); }
-.card-art img { width: 100%; height: 100%; object-fit: cover; }
+.card-art img { width: 100%; height: 100%; object-fit: contain; padding: 8%; }
 .card:hover .card-art svg { transform: translateY(-6px) rotate(-4deg); }
 .tag { position: absolute; left: 12px; top: 12px; font-size: .74rem; font-weight: 700; letter-spacing: .04em; padding: 5px 10px; border-radius: 999px; background: rgba(7,6,10,.65); border: 1px solid var(--line); color: var(--text); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
 .tag.hot { left: auto; right: 12px; background: var(--c); color: var(--on-violet); border-color: transparent; }
@@ -334,7 +334,7 @@ dialog::backdrop { background: rgba(4, 3, 7, .72); -webkit-backdrop-filter: blur
 .pick-head { --c: var(--violet); display: flex; gap: 16px; align-items: center; padding-right: 48px; }
 .pick-art { flex: none; width: 92px; height: 104px; border-radius: 20px; display: grid; place-items: center; background: radial-gradient(circle at 50% 45%, color-mix(in srgb, var(--c) 40%, transparent), transparent 70%), var(--surface-2); overflow: hidden; }
 .pick-art svg { width: 52%; height: auto; }
-.pick-art img { width: 100%; height: 100%; object-fit: cover; }
+.pick-art img { width: 100%; height: 100%; object-fit: contain; padding: 8%; }
 .pick-brand { color: var(--c); font-size: .78rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
 .sheet h2 { font-size: 1.45rem; margin-top: 2px; }
 .pick-meta { color: var(--muted); font-size: .9rem; margin-top: 2px; }
@@ -382,7 +382,7 @@ dialog::backdrop { background: rgba(4, 3, 7, .72); -webkit-backdrop-filter: blur
 .item { --c: var(--violet); display: grid; grid-template-columns: 58px 1fr auto; gap: 4px 14px; align-items: center; padding: 16px 0; border-bottom: 1px solid var(--line); animation: cardIn .3s var(--ease) both; }
 .item-art { grid-row: span 2; width: 58px; height: 66px; border-radius: 14px; display: grid; place-items: center; background: radial-gradient(circle at 50% 45%, color-mix(in srgb, var(--c) 40%, transparent), transparent 70%), var(--surface-2); overflow: hidden; }
 .item-art svg { width: 54%; height: auto; }
-.item-art img { width: 100%; height: 100%; object-fit: cover; }
+.item-art img { width: 100%; height: 100%; object-fit: contain; padding: 8%; }
 .item-name { font-weight: 700; line-height: 1.25; }
 .item-flavor { display: inline-flex; align-items: center; gap: 6px; color: var(--muted); font-size: .88rem; margin-top: 2px; }
 .item-flavor i { width: 10px; height: 10px; border-radius: 50%; background: var(--fc, var(--grad)); }

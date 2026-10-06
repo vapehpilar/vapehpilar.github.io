@@ -34,7 +34,10 @@ window.VHP_SABORES = [
    El stock es ilimitado: todos los productos se pueden pedir.
    Campos opcionales:
      sabores: ["Sabor 1", "Sabor 2"]  → reemplaza la lista por defecto en ese modelo.
-     img: "img/ice-king.jpg"          → foto real; si está vacío se dibuja una ilustración.
+     img: "img/otra-foto.png"         → foto con otro nombre o formato.
+                                        Por defecto cada producto busca su foto en img/
+                                        (ej: img/elfbar-ice-king.jpg). Si no está, se dibuja
+                                        una ilustración. img: "" fuerza la ilustración.
      etiqueta: "Nuevo"                → cartelito sobre la tarjeta. */
 window.VHP_PRODUCTOS = [
   { marca: "Elfbar", nombre: "Ice King", pitadas: 40000, precio: 25000 },

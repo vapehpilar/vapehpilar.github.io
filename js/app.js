@@ -58,8 +58,27 @@
 
   // ---------- ilustración del vape ----------
   var artSeq = 0;
+  var noPhoto = {};
+  function slug(s) { return norm(s).replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, ""); }
+  function photoOf(p) {
+    if (p.img === "") return "";
+    return p.img || "img/" + slug(p.marca + " " + p.nombre) + ".jpg";
+  }
+  // Si la foto no existe (o no carga) se reemplaza por la ilustración.
+  document.addEventListener("error", function (e) {
+    var el = e.target, pid = el && el.getAttribute && el.getAttribute("data-photo");
+    if (!pid) return;
+    noPhoto[pid] = true;
+    el.outerHTML = drawing(byId[pid]);
+  }, true);
+
   function art(p) {
-    if (p.img) return '<img src="' + esc(p.img) + '" alt="' + esc(p.marca + " " + p.nombre) + '" loading="lazy">';
+    var src = p.id && !noPhoto[p.id] ? photoOf(p) : "";
+    if (src) return '<img src="' + esc(src) + '" alt="' + esc(p.marca + " " + p.nombre) + '" data-photo="' + p.id + '" loading="lazy">';
+    return drawing(p);
+  }
+
+  function drawing(p) {
     var c = brandColor(p), g = "g" + (++artSeq);
     var screen = p.pitadas && p.pitadas >= 30000
       ? '<rect x="25" y="70" width="30" height="16" rx="4" fill="#0b0912" opacity=".85"/>' +
@@ -117,7 +136,7 @@
     var picks = BRANDS.map(function (b) { return PRODUCTS.filter(function (p) { return p.marca === b; })[0]; });
     ["#hero-v1", "#hero-v2", "#hero-v3"].forEach(function (sel, i) {
       var p = picks[i % picks.length];
-      if (p) $(sel).innerHTML = art(Object.assign({}, p, { img: "" }));
+      if (p) $(sel).innerHTML = drawing(p);
     });
   })();
 
