@@ -169,13 +169,58 @@
   (function heroArt() {
     var byName = {};
     PRODUCTS.forEach(function (p) { byName[norm(p.marca + " " + p.nombre)] = p; });
-    var picks = (CFG.portada || []).map(function (n) { return byName[norm(n)]; }).filter(Boolean);
-    if (picks.length < 3) picks = picks.concat(PRODUCTS).slice(0, 3);
-    ["#hero-v1", "#hero-v2", "#hero-v3"].forEach(function (sel, i) {
-      var p = picks[i], el = $(sel);
-      el.style.setProperty("--pc", tint(p));
-      el.innerHTML = art(p, i === 1 ? "200px" : "160px", true);
-    });
+    var first = (CFG.portada || []).map(function (n) { return byName[norm(n)]; }).filter(Boolean);
+    // Orden de rotación: primero los de la portada, después el resto del catálogo.
+    var order = first.concat(PRODUCTS.filter(function (p) { return first.indexOf(p) < 0; }));
+    var slots = ["#hero-v1", "#hero-v2", "#hero-v3"].map(function (s) { return $(s); });
+    var pos = 0;
+    function show(start, animate) {
+      slots.forEach(function (el, i) {
+        var p = order[(start + i) % order.length];
+        var put = function () {
+          el.style.setProperty("--pc", tint(p));
+          el.innerHTML = art(p, i === 1 ? "200px" : "160px", true);
+          el.setAttribute("data-hero", p.id);
+        };
+        if (!animate) return put();
+        setTimeout(function () {
+          el.classList.add("swap");
+          setTimeout(function () {
+            put();
+            var img = $("img", el);
+            var reveal = function () { el.classList.remove("swap"); };
+            if (img && !img.complete) { img.onload = reveal; img.onerror = reveal; setTimeout(reveal, 900); } else reveal();
+          }, 450);
+        }, i * 140);
+      });
+    }
+    show(0, false);
+    var reduce = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduce || order.length <= 3) return;
+    var heroEl = $(".hero"), visible = true;
+    if ("IntersectionObserver" in window) {
+      new IntersectionObserver(function (en) { visible = en[0].isIntersecting; }).observe(heroEl);
+    }
+    setInterval(function () {
+      if (document.hidden || !visible) return;
+      pos = (pos + 3) % order.length;
+      show(pos, true);
+    }, 5500);
+  })();
+
+  // ---------- cinta con fotos ----------
+  (function ticker() {
+    var track = $(".ticker-track");
+    if (!track) return;
+    var items = PRODUCTS.map(function (p) {
+      return '<button class="tk" type="button" data-pick="' + p.id + '" tabindex="-1" style="--pc:' + tint(p) + '">' +
+        '<span class="tk-img">' + art(p, "60px") + "</span>" +
+        '<span class="tk-name"><small>' + esc(p.marca) + "</small>" + esc(p.nombre) + "</span></button>";
+    }).join('<span class="tk-sep">✦</span>');
+    // Dos copias seguidas para que la cinta no tenga cortes.
+    track.innerHTML = items + '<span class="tk-sep">✦</span>' + items + '<span class="tk-sep">✦</span>';
+    track.classList.add("with-photos");
+    track.style.animationDuration = PRODUCTS.length * 4.5 + "s";
   })();
 
   // ---------- catálogo ----------
@@ -231,10 +276,31 @@
 
   function renderCatalog() {
     var list = visibleProducts();
-    $("#catalog").innerHTML = list.length
+    var grid = $("#catalog"), before = {};
+    var animate = grid.children.length && !(window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches);
+    // Guardamos dónde estaba cada tarjeta para deslizarla a su nuevo lugar.
+    if (animate) $$("[data-card]", grid).forEach(function (c) { before[c.getAttribute("data-card")] = c.getBoundingClientRect(); });
+    grid.innerHTML = list.length
       ? list.map(card).join("")
       : '<li class="empty"><p>No encontramos productos con esa búsqueda.</p><button class="btn ghost" type="button" data-reset>Ver todos</button></li>';
     $("#result-count").textContent = list.length === 1 ? "1 producto" : list.length + " productos";
+    if (!animate) return;
+    var fresh = 0;
+    $$("[data-card]", grid).forEach(function (c) {
+      var old = before[c.getAttribute("data-card")];
+      if (!old) {
+        c.style.animation = "none";
+        c.animate([{ opacity: 0, transform: "scale(.92)" }, { opacity: 1, transform: "none" }],
+          { duration: 380, delay: 120 + fresh++ * 40, easing: "cubic-bezier(.2,.8,.2,1)", fill: "backwards" });
+        return;
+      }
+      var now = c.getBoundingClientRect();
+      var dx = old.left - now.left, dy = old.top - now.top;
+      c.style.animation = "none";
+      if (Math.abs(dx) < 1 && Math.abs(dy) < 1) return;
+      c.animate([{ transform: "translate(" + dx + "px," + dy + "px)" }, { transform: "none" }],
+        { duration: 480, easing: "cubic-bezier(.2,.8,.2,1)" });
+    });
   }
 
   function refreshBadges() {
@@ -341,6 +407,22 @@
     else prompt("Copiá el link:", url);
   });
 
+  // El botón "Agregar" de la tarjeta se transforma en un ✓ por un momento.
+  function confirmAdd(pid) {
+    var b = $('[data-card="' + pid + '"] .add');
+    if (!b) return;
+    var label = $("span", b), icon = $("svg path", b);
+    b.classList.add("done");
+    if (label) label.textContent = "Agregado";
+    if (icon) icon.setAttribute("d", "M5 12.5l4.5 4.5L19 7.5");
+    clearTimeout(b._t);
+    b._t = setTimeout(function () {
+      b.classList.remove("done");
+      if (label) label.textContent = "Agregar";
+      if (icon) icon.setAttribute("d", "M12 5v14M5 12h14");
+    }, 1500);
+  }
+
   function updatePick() {
     var p = byId[pick.pid];
     $("#pick-qty").textContent = pick.qty;
@@ -357,6 +439,7 @@
     var p = byId[pick.pid];
     addLine(pick.pid, flavor, pick.qty);
     closeDlg(pickDlg);
+    confirmAdd(pick.pid);
     renderCart();
     refreshBadges();
     bump();
