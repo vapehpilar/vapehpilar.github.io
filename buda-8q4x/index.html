@@ -20,7 +20,8 @@
   <div class="wrap top-in">
     <a class="logo" href="../" title="Volver a la tienda"><span class="mark">VHP</span><span class="tag">Panel</span></a>
     <div class="top-actions" id="top-actions" hidden>
-      <button class="ghost-btn" type="button" id="refresh" aria-label="Actualizar datos">
+      <a class="ghost-btn hide-sm" href="../" target="_blank" rel="noopener">Ver tienda</a>
+      <button class="ghost-btn" type="button" id="refresh" aria-label="Actualizar datos" title="Actualizar">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11a8 8 0 1 0-2.3 5.7M20 4v7h-7"/></svg>
       </button>
       <button class="ghost-btn" type="button" id="logout">Salir</button>
@@ -68,75 +69,122 @@
     <div class="dash-head">
       <div>
         <p class="kicker">Analíticas</p>
-        <h1>Visitas de la tienda</h1>
+        <h1>Cómo viene la tienda</h1>
         <p class="muted" id="range-label"></p>
       </div>
       <div class="ranges" role="group" aria-label="Período">
+        <button type="button" data-days="1">Hoy</button>
         <button type="button" data-days="7">7 días</button>
         <button type="button" data-days="30" aria-pressed="true">30 días</button>
         <button type="button" data-days="90">90 días</button>
       </div>
     </div>
 
+    <p class="insight" id="insight" hidden></p>
+
+    <!-- Números principales -->
     <div class="tiles">
       <article class="tile hero-tile">
         <p class="t-label">Visitantes</p>
-        <p class="t-value" id="t-visits">–</p>
-        <p class="t-delta" id="t-delta"></p>
-        <p class="t-all">Total histórico: <strong id="t-all">–</strong></p>
-      </article>
-      <article class="tile">
-        <p class="t-label">Hoy</p>
-        <p class="t-value" id="t-today">–</p>
+        <p class="t-value" id="k-visits">–</p>
+        <p class="t-delta" id="d-visits"></p>
+        <p class="t-all">Hoy: <strong id="k-today">–</strong> · Total histórico: <strong id="k-all">–</strong></p>
       </article>
       <article class="tile">
         <p class="t-label">Pedidos enviados</p>
-        <p class="t-value" id="t-orders">–</p>
+        <p class="t-value" id="k-orders">–</p>
+        <p class="t-delta" id="d-orders"></p>
       </article>
       <article class="tile">
-        <p class="t-label">Productos agregados</p>
-        <p class="t-value" id="t-adds">–</p>
+        <p class="t-label">Conversión</p>
+        <p class="t-value" id="k-conv">–</p>
+        <p class="t-delta" id="d-conv"></p>
+      </article>
+      <article class="tile">
+        <p class="t-label">Monto en pedidos <span class="hint-i" title="Suma de los pedidos enviados por WhatsApp. Es una estimación: no todos se concretan.">ⓘ</span></p>
+        <p class="t-value" id="k-amount">–</p>
+        <p class="t-delta" id="d-amount"></p>
+      </article>
+      <article class="tile">
+        <p class="t-label">Ticket promedio</p>
+        <p class="t-value" id="k-ticket">–</p>
+        <p class="t-delta" id="d-ticket"></p>
+      </article>
+      <article class="tile">
+        <p class="t-label">Vapes pedidos</p>
+        <p class="t-value" id="k-units">–</p>
+        <p class="t-delta" id="d-units"></p>
       </article>
       <article class="tile">
         <p class="t-label">Consultas por WhatsApp</p>
-        <p class="t-value" id="t-wa">–</p>
+        <p class="t-value" id="k-wa">–</p>
+        <p class="t-delta" id="d-wa"></p>
       </article>
     </div>
 
-    <article class="panel chart-panel">
+    <!-- Embudo -->
+    <article class="panel">
+      <div class="panel-head">
+        <h2>Embudo de compra</h2>
+        <p class="muted small">Cuántos visitantes llegan a cada paso</p>
+      </div>
+      <ol class="funnel" id="funnel"></ol>
+    </article>
+
+    <!-- Gráficos por día -->
+    <article class="panel">
       <div class="panel-head">
         <h2>Visitantes por día</h2>
-        <button type="button" class="link-btn" id="toggle-table" aria-expanded="false">Ver tabla</button>
+        <button type="button" class="link-btn" data-table="t-visits" aria-expanded="false">Ver tabla</button>
       </div>
-      <div class="chart" id="chart" role="img" aria-label="Gráfico de visitantes por día"></div>
-      <div class="tip" id="tip" role="status" hidden></div>
-      <div class="table-wrap" id="table-wrap" hidden>
+      <div class="chart" id="c-visits" role="img"></div>
+      <div class="table-wrap" id="t-visits" hidden></div>
+    </article>
+
+    <article class="panel">
+      <div class="panel-head">
+        <h2>Pedidos por día</h2>
+        <button type="button" class="link-btn" data-table="t-orders" aria-expanded="false">Ver tabla</button>
+      </div>
+      <div class="chart small-chart" id="c-orders" role="img"></div>
+      <div class="table-wrap" id="t-orders" hidden></div>
+    </article>
+
+    <!-- Mapa de calor -->
+    <article class="panel">
+      <div class="panel-head">
+        <h2>Cuándo entra la gente</h2>
+        <p class="muted small" id="best-time"></p>
+      </div>
+      <div class="heat-wrap"><div class="heat" id="heat"></div></div>
+      <div class="heat-legend" aria-hidden="true"><span>Menos</span><i></i><span>Más</span></div>
+    </article>
+
+    <!-- Productos -->
+    <article class="panel">
+      <div class="panel-head">
+        <h2>Productos</h2>
+        <p class="muted small">Visitantes que vieron, agregaron y pidieron cada vape</p>
+      </div>
+      <div class="table-wrap products-table">
         <table>
-          <thead><tr><th scope="col">Día</th><th scope="col">Visitantes</th></tr></thead>
-          <tbody id="table-body"></tbody>
+          <thead><tr><th scope="col">Vape</th><th scope="col">Vistos</th><th scope="col">Agregados</th><th scope="col">Pedidos</th><th scope="col">% agrega</th></tr></thead>
+          <tbody id="products-body"></tbody>
         </table>
       </div>
     </article>
 
+    <!-- Origen y audiencia -->
     <div class="grid-2">
-      <article class="panel">
-        <h2>Productos más agregados</h2>
-        <ol class="rank" id="l-products"></ol>
-      </article>
-      <article class="panel">
-        <h2>De dónde llegan</h2>
-        <ol class="rank" id="l-refs"></ol>
-      </article>
-      <article class="panel">
-        <h2>Ubicación</h2>
-        <ol class="rank" id="l-locations"></ol>
-      </article>
-      <article class="panel">
-        <h2>Dispositivos</h2>
-        <ol class="rank" id="l-systems"></ol>
-      </article>
+      <article class="panel"><h2>De dónde llegan</h2><ol class="rank" id="l-refs"></ol></article>
+      <article class="panel"><h2>Links directos y compartidos</h2><ol class="rank" id="l-links"></ol></article>
+      <article class="panel"><h2>Ubicación</h2><ol class="rank" id="l-locations"></ol></article>
+      <article class="panel"><h2>Dispositivos</h2><ol class="rank" id="l-systems"></ol></article>
+      <article class="panel"><h2>Navegadores</h2><ol class="rank" id="l-browsers"></ol></article>
+      <article class="panel"><h2>Tamaño de pantalla</h2><ol class="rank" id="l-sizes"></ol></article>
     </div>
 
+    <!-- Ajustes -->
     <article class="panel settings">
       <h2>Ajustes</h2>
       <label class="switch">
@@ -145,12 +193,21 @@
         <span>No contar mis propias visitas en este dispositivo</span>
       </label>
       <p class="muted small">Activalo en cada celular o compu que uses, así tus entradas no inflan los números.</p>
-      <p class="small"><a id="gc-link" href="#" target="_blank" rel="noopener">Abrir GoatCounter completo →</a></p>
+      <label class="switch">
+        <input type="checkbox" id="auto" checked>
+        <span class="track" aria-hidden="true"></span>
+        <span>Actualizar solo cada 5 minutos</span>
+      </label>
+      <div class="settings-actions">
+        <button type="button" class="ghost-btn" id="export">Descargar datos (CSV)</button>
+        <a class="ghost-btn" id="gc-link" href="#" target="_blank" rel="noopener">Abrir GoatCounter →</a>
+      </div>
     </article>
 
     <p class="muted small foot-note" id="updated"></p>
   </section>
 
+  <div class="tip" id="tip" role="status" hidden></div>
   <div class="loading" id="loading" hidden><span></span><span></span><span></span></div>
 </main>
 

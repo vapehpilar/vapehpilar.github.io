@@ -285,7 +285,61 @@
     document.dispatchEvent(new CustomEvent("vhp:open", { detail: { pid: pid, trigger: trigger } }));
     $("#pick-add").focus({ preventScroll: true });
     $(".sheet-in", pickDlg).scrollTop = 0;
+    track("visto/" + slugOf(p), "Visto: " + p.marca + " " + p.nombre);
+    track("embudo/vio-producto", "Embudo: vio un producto");
+    // La dirección pasa a ser el link directo de este vape (para copiar o compartir).
+    try { history.replaceState(null, "", "#" + slugOf(p)); } catch (e) {}
   }
+
+  // ---------- links directos: vapehpilar.github.io/#elfbar-summer ----------
+  function slugOf(p) { return slug(p.marca + " " + p.nombre); }
+  function linkOf(p) { return location.origin + location.pathname + "#" + slugOf(p); }
+  function pidFromHash() {
+    var h = decodeURIComponent(location.hash.slice(1));
+    for (var i = 0; i < PRODUCTS.length; i++) if (slugOf(PRODUCTS[i]) === h) return PRODUCTS[i].id;
+    return null;
+  }
+  function openFromHash(fromLink) {
+    var pid = pidFromHash();
+    if (!pid || pickDlg.open) return;
+    var gateEl = $("#age");
+    if (gateEl.open) {
+      gateEl.addEventListener("close", function once() { gateEl.removeEventListener("close", once); openFromHash(fromLink); });
+      return;
+    }
+    if (filter.brand !== "Todos" || filter.q) {
+      filter.brand = "Todos"; filter.q = ""; $("#q").value = "";
+      renderChips(); renderCatalog();
+    }
+    var card = $('[data-card="' + pid + '"]');
+    if (card) card.scrollIntoView({ block: "center", behavior: "instant" });
+    if (fromLink) track("link-directo/" + slugOf(byId[pid]), "Link directo: " + byId[pid].marca + " " + byId[pid].nombre);
+    openPick(pid, card ? $(".add", card) : null);
+  }
+  window.addEventListener("hashchange", function () { openFromHash(true); });
+  pickDlg.addEventListener("close", function () {
+    if (pidFromHash()) { try { history.replaceState(null, "", location.pathname + location.search); } catch (e) {} }
+  });
+
+  $("#pick-share").addEventListener("click", function () {
+    var p = byId[pick.pid], url = linkOf(p);
+    var title = p.marca + " " + p.nombre + " · " + CFG.tienda;
+    track("compartido/" + slugOf(p), "Compartido: " + p.marca + " " + p.nombre);
+    if (navigator.share) {
+      navigator.share({ title: title, text: title + " " + fmt(p.precio), url: url }).catch(function () {});
+      return;
+    }
+    // El aviso va sobre el mismo botón: la ventana tapa los avisos comunes.
+    var btn = $("#pick-share");
+    var done = function () {
+      btn.classList.add("copied");
+      btn.setAttribute("aria-label", "Link copiado");
+      clearTimeout(btn._t);
+      btn._t = setTimeout(function () { btn.classList.remove("copied"); btn.setAttribute("aria-label", "Compartir este vape"); }, 1800);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(url).then(done, function () { prompt("Copiá el link:", url); });
+    else prompt("Copiá el link:", url);
+  });
 
   function updatePick() {
     var p = byId[pick.pid];
@@ -306,7 +360,8 @@
     renderCart();
     refreshBadges();
     bump();
-    track("agregado/" + slug(p.marca + " " + p.nombre), "Agregado: " + p.marca + " " + p.nombre);
+    track("agregado/" + slugOf(p), "Agregado: " + p.marca + " " + p.nombre);
+    track("embudo/agrego", "Embudo: agregó al pedido");
     document.dispatchEvent(new CustomEvent("vhp:add", { detail: { pid: p.id, color: tint(p) } }));
     toast(pick.qty + " × " + p.marca + " " + p.nombre + (flavor ? " · " + flavor : ""), brandColor(p));
     if (lastTrigger && document.contains(lastTrigger)) lastTrigger.focus({ preventScroll: true });
@@ -452,6 +507,8 @@
     var tt = totals();
     track("pedido-enviado", "Pedido enviado por WhatsApp");
     track("pedido-unidades/" + tt.n, "Pedido de " + tt.n + (tt.n === 1 ? " vape" : " vapes"));
+    track("pedido-monto/" + tt.t, "Pedido de " + fmt(tt.t));
+    lines.forEach(function (l) { track("pedido-producto/" + slugOf(byId[l.pid]), "Pedido: " + byId[l.pid].marca + " " + byId[l.pid].nombre); });
   });
 
   // ---------- clicks globales ----------
@@ -475,10 +532,10 @@
 
   // ---------- toast y efectos ----------
   var toastTimer;
-  function toast(text, color) {
+  function toast(text, color, raw) {
     var t = $("#toast");
     t.innerHTML = '<i style="background:' + (color || "var(--violet)") + '"></i><span></span>';
-    $("span", t).textContent = "Agregado: " + text;
+    $("span", t).textContent = raw ? text : "Agregado: " + text;
     t.classList.add("show");
     clearTimeout(toastTimer);
     toastTimer = setTimeout(function () { t.classList.remove("show"); }, 2600);
@@ -532,4 +589,5 @@
   renderCatalog();
   renderCart();
   if (!ok) openDlg(gate);
+  openFromHash(true);
 })();

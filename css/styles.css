@@ -341,7 +341,12 @@ dialog::backdrop { background: rgba(4, 3, 7, .72); -webkit-backdrop-filter: blur
 }
 .sheet-in::before { content: ""; display: block; width: 44px; height: 5px; border-radius: 9px; background: var(--line); margin: -8px auto 16px; }
 .sheet .x { position: absolute; right: 16px; top: 16px; }
-.pick-head { --c: var(--violet); display: flex; gap: 16px; align-items: center; padding-right: 48px; }
+.sheet .x.share { right: 66px; }
+.sheet .x.share:hover { transform: none; }
+.sheet .x.share.copied { background: var(--violet); border-color: var(--violet); color: var(--on-violet); }
+.sheet .x.share::after { content: "Link copiado"; position: absolute; top: calc(100% + 8px); right: 50%; transform: translateX(50%) translateY(-4px); white-space: nowrap; padding: 6px 10px; border-radius: 10px; background: var(--text); color: var(--bg); font-size: .8rem; font-weight: 600; opacity: 0; pointer-events: none; transition: opacity .2s, transform .2s; }
+.sheet .x.share.copied::after { opacity: 1; transform: translateX(50%); }
+.pick-head { --c: var(--violet); display: flex; gap: 16px; align-items: center; padding-right: 100px; }
 .pick-art { flex: none; width: 92px; height: 104px; border-radius: 20px; display: grid; place-items: center; background: radial-gradient(circle at 50% 45%, color-mix(in srgb, var(--pc, var(--c)) 45%, transparent), transparent 70%), var(--surface-2); overflow: hidden; }
 .pick-art svg { width: 52%; height: auto; }
 .pick-art img { width: 100%; height: 100%; object-fit: contain; padding: 8%; }
