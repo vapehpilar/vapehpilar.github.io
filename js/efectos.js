@@ -79,6 +79,10 @@
   bar.setAttribute("aria-hidden", "true");
   document.body.appendChild(bar);
   var floats = $$(".hero-art .float");
+  var wide = window.matchMedia("(min-width: 860px)");
+  wide.addEventListener && wide.addEventListener("change", function () {
+    if (!wide.matches) floats.forEach(function (f) { f.style.translate = ""; });
+  });
   var ticking = false;
   function onScroll() {
     if (ticking) return;
@@ -86,7 +90,9 @@
     requestAnimationFrame(function () {
       var h = document.documentElement.scrollHeight - innerHeight;
       bar.style.transform = "scaleX(" + (h > 0 ? scrollY / h : 0) + ")";
-      if (!reduce && floats.length && scrollY < innerHeight * 1.2) {
+      // Parallax solo en pantallas anchas: en celular los vapes están debajo del texto
+      // y, si suben, lo tapan.
+      if (!reduce && floats.length && wide.matches && scrollY < innerHeight * 1.2) {
         floats.forEach(function (f, i) { f.style.translate = "0 " + (-scrollY * (0.12 + i * 0.07)) + "px"; });
       }
       ticking = false;
