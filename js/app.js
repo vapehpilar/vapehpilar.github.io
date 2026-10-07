@@ -47,6 +47,7 @@
     .filter(function (b, i, a) { return a.indexOf(b) === i; });
 
   function brandColor(p) { return BRAND_COLOR[p.marca] || "#a899d6"; }
+  function tint(p) { return p.color || brandColor(p); }
 
   // ---------- ilustración del vape ----------
   var artSeq = 0;
@@ -68,11 +69,11 @@
 
   // sizes: ancho con el que se muestra la foto, para que el navegador elija la versión justa.
   var CARD_SIZES = "(min-width: 1080px) 260px, (min-width: 860px) 31vw, 46vw";
-  function art(p, sizes) {
+  function art(p, sizes, eager) {
     var src = p.id && !noPhoto[p.id] ? photoOf(p) : "";
     if (!src) return drawing(p);
     var set = p.img ? "" : ' srcset="' + esc(src.replace(/\.webp$/, "-sm.webp")) + " 400w, " + esc(src) + ' 600w" sizes="' + (sizes || CARD_SIZES) + '"';
-    return '<img src="' + esc(src) + '"' + set + ' width="600" height="720" alt="' + esc(p.marca + " " + p.nombre) + '" data-photo="' + p.id + '" loading="lazy" decoding="async">';
+    return '<img src="' + esc(src) + '"' + set + ' width="600" height="720" alt="' + esc(p.marca + " " + p.nombre) + '" data-photo="' + p.id + '" loading="' + (eager ? "eager" : "lazy") + '" decoding="async">';
   }
 
   function drawing(p) {
@@ -166,10 +167,14 @@
 
   // ---------- hero ----------
   (function heroArt() {
-    var picks = BRANDS.map(function (b) { return PRODUCTS.filter(function (p) { return p.marca === b; })[0]; });
+    var byName = {};
+    PRODUCTS.forEach(function (p) { byName[norm(p.marca + " " + p.nombre)] = p; });
+    var picks = (CFG.portada || []).map(function (n) { return byName[norm(n)]; }).filter(Boolean);
+    if (picks.length < 3) picks = picks.concat(PRODUCTS).slice(0, 3);
     ["#hero-v1", "#hero-v2", "#hero-v3"].forEach(function (sel, i) {
-      var p = picks[i % picks.length];
-      if (p) $(sel).innerHTML = drawing(p);
+      var p = picks[i], el = $(sel);
+      el.style.setProperty("--pc", tint(p));
+      el.innerHTML = art(p, i === 1 ? "200px" : "160px", true);
     });
   })();
 
@@ -211,7 +216,7 @@
     var meta = p.pitadas ? num(p.pitadas) + " pitadas" : "Descartable";
     var tag = p.etiqueta ? '<span class="tag hot">' + esc(p.etiqueta) + "</span>" : "";
     var puffTag = p.pitadas ? '<span class="tag">' + Math.round(p.pitadas / 1000) + "K</span>" : "";
-    return '<li class="card" style="--c:' + brandColor(p) + ";--i:" + i + '" data-card="' + p.id + '">' +
+    return '<li class="card" style="--c:' + brandColor(p) + ";--pc:" + tint(p) + ";--i:" + i + '" data-card="' + p.id + '">' +
       '<button class="card-art" type="button" data-pick="' + p.id + '" aria-label="Agregar ' + esc(name) + '">' +
       art(p) + puffTag + tag + '<span class="badge-slot">' + badge(p.id) + "</span></button>" +
       '<div class="card-body">' +
@@ -268,6 +273,7 @@
     pick = { pid: pid, qty: 1 };
     lastTrigger = trigger || null;
     $(".pick-head", pickDlg).style.setProperty("--c", brandColor(p));
+    $(".pick-head", pickDlg).style.setProperty("--pc", tint(p));
     $("#pick-art").innerHTML = art(p, "100px");
     $("#pick-brand").textContent = p.marca;
     $("#pick-title").textContent = p.nombre;
@@ -276,6 +282,7 @@
     $("#flavor-pref").value = "";
     updatePick();
     openDlg(pickDlg);
+    document.dispatchEvent(new CustomEvent("vhp:open", { detail: { pid: pid, trigger: trigger } }));
     $("#pick-add").focus({ preventScroll: true });
     $(".sheet-in", pickDlg).scrollTop = 0;
   }
@@ -300,7 +307,7 @@
     refreshBadges();
     bump();
     track("agregado/" + slug(p.marca + " " + p.nombre), "Agregado: " + p.marca + " " + p.nombre);
-    document.dispatchEvent(new CustomEvent("vhp:add", { detail: { pid: p.id, color: brandColor(p) } }));
+    document.dispatchEvent(new CustomEvent("vhp:add", { detail: { pid: p.id, color: tint(p) } }));
     toast(pick.qty + " × " + p.marca + " " + p.nombre + (flavor ? " · " + flavor : ""), brandColor(p));
     if (lastTrigger && document.contains(lastTrigger)) lastTrigger.focus({ preventScroll: true });
   });
@@ -310,7 +317,7 @@
 
   function itemHtml(l, i) {
     var p = byId[l.pid];
-    return '<li class="item" style="--c:' + brandColor(p) + '">' +
+    return '<li class="item" style="--c:' + brandColor(p) + ";--pc:" + tint(p) + '">' +
       '<div class="item-art">' + art(p, "60px") + "</div>" +
       '<div><p class="item-name">' + esc(p.marca + " " + p.nombre) + "</p>" +
       '<p class="item-flavor">' + (l.flavor ? "Sabor: " + esc(l.flavor) : "Sabor a confirmar") + "</p></div>" +
