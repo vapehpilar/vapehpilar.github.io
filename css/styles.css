@@ -111,7 +111,7 @@ a, button, label, summary { -webkit-tap-highlight-color: transparent; }
 @keyframes bump { 30% { transform: scale(1.12); } 60% { transform: scale(.96); } }
 
 /* ---------- Hero ---------- */
-.hero { position: relative; overflow: hidden; padding: 56px 0 64px; isolation: isolate; }
+.hero { position: relative; overflow: hidden; padding: 56px 0 28px; isolation: isolate; }
 .smoke { position: absolute; inset: 0; z-index: -1; pointer-events: none; }
 .smoke span { position: absolute; border-radius: 50%; filter: blur(70px); opacity: .55; animation: drift 18s ease-in-out infinite alternate; }
 .smoke span:nth-child(1) { width: 520px; height: 520px; background: #5b4a9e; top: -180px; right: -120px; }
