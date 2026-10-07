@@ -196,6 +196,43 @@
     };
   });
 
+  // ---------- Al abrir un producto: la foto sale de la tarjeta y se agranda ----------
+  document.addEventListener("vhp:open", function (e) {
+    if (reduce) return;
+    var card = e.detail.trigger && e.detail.trigger.closest && e.detail.trigger.closest(".card");
+    var src = card && $(".card-art img, .card-art svg", card);
+    var dlg = $("#pick"), dest = $("#pick-art");
+    if (!src || !dlg || !dest) return;
+    var a = src.getBoundingClientRect();
+    if (!a.width || a.bottom < 0 || a.top > innerHeight) return;
+    // La ventana aparece en su lugar (con un fundido) y la foto viaja desde la tarjeta.
+    // El recorte va dentro de la ventana porque la ventana siempre queda por encima de todo.
+    dlg.style.animation = "none";
+    var target = $("img, svg", dest);
+    var b = (target || dest).getBoundingClientRect();
+    if (!b.width) { dlg.style.animation = ""; return; }
+    var inner = $(".sheet-in", dlg);
+    if (inner) inner.animate([{ opacity: 0, transform: "translateY(18px)" }, { opacity: 1, transform: "none" }], { duration: 260, easing: "ease-out" });
+    var clone = document.createElement("div");
+    clone.className = "zoom-clone";
+    clone.style.cssText = "left:" + a.left + "px;top:" + a.top + "px;width:" + a.width + "px;height:" + a.height + "px;transform-origin:0 0";
+    clone.appendChild(src.cloneNode(true));
+    dlg.appendChild(clone);
+    dest.classList.add("zooming");
+    var sx = b.width / a.width, sy = b.height / a.height;
+    var anim = clone.animate([
+      { transform: "translate(0,0) scale(1)" },
+      { transform: "translate(" + (b.left - a.left) + "px," + (b.top - a.top) + "px) scale(" + sx + "," + sy + ")" }
+    ], { duration: 440, easing: "cubic-bezier(.2,.8,.2,1)" });
+    function cleanup() { clone.remove(); dest.classList.remove("zooming"); }
+    anim.onfinish = anim.oncancel = cleanup;
+    dlg.addEventListener("close", function done() {
+      cleanup();
+      dlg.style.animation = "";
+      dlg.removeEventListener("close", done);
+    });
+  });
+
   function burst(x, y, color) {
     for (var i = 0; i < 12; i++) {
       var s = document.createElement("i");
