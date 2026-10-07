@@ -150,6 +150,36 @@ body::after {
 .zoom-clone svg { width: 100%; height: 100%; display: block; }
 .pick-art.zooming img, .pick-art.zooming svg { opacity: 0; }
 
+/* ---------- Portada que rota ---------- */
+.hero-art .float > * { transition: opacity .45s var(--ease), transform .45s var(--ease); }
+.hero-art .float::before { transition: background .6s; }
+.hero-art .float.swap > * { opacity: 0; transform: translateY(14px) scale(.92); }
+
+/* ---------- Cinta con fotos ---------- */
+.ticker-track.with-photos { align-items: center; gap: 22px; }
+.ticker:hover .ticker-track.with-photos { animation-play-state: paused; }
+.tk {
+  display: inline-flex; align-items: center; gap: 10px; padding: 4px 14px 4px 4px; border-radius: 999px;
+  border: 1px solid var(--line-soft); background: rgba(255, 255, 255, .02); cursor: pointer;
+  font: inherit; color: var(--text); text-transform: none; letter-spacing: 0; transition: border-color .2s, background .2s;
+}
+.tk:hover { border-color: color-mix(in srgb, var(--pc) 60%, transparent); background: color-mix(in srgb, var(--pc) 10%, transparent); }
+.tk-img {
+  flex: none; width: 40px; height: 46px; border-radius: 999px; display: grid; place-items: center; overflow: hidden;
+  background: radial-gradient(circle at 50% 50%, color-mix(in srgb, var(--pc) 45%, transparent), transparent 70%);
+}
+.tk-img img { width: 100%; height: 100%; object-fit: contain; padding: 2px; }
+.tk-img svg { width: 60%; height: auto; }
+.tk-name { display: flex; flex-direction: column; line-height: 1.1; font: 700 .9rem var(--display); white-space: nowrap; text-align: left; }
+.tk-name small { font: 600 .66rem var(--body); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+.ticker-track.with-photos span:nth-child(even) { color: inherit; }
+.ticker-track.with-photos .tk-sep { color: var(--violet); font-size: .8rem; }
+.ticker:has(.with-photos) { padding: 10px 0; }
+
+/* ---------- Botón Agregar que confirma ---------- */
+.add.done { background: #6fe3a6; color: #062b14; animation: addPop .45s var(--ease); }
+@keyframes addPop { 40% { transform: scale(1.08); } }
+
 @media (prefers-reduced-motion: reduce) {
   .progress, .puffs, .halo, .ripple, .spark, .fly, .zoom-clone { display: none !important; }
   body::before { animation: none; }
