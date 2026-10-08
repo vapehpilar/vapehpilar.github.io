@@ -24,8 +24,9 @@
 .js .hero.ready .stats { transition-delay: .65s; }
 
 .word { display: inline-block; overflow: hidden; vertical-align: bottom; padding-bottom: .06em; margin-bottom: -.06em; }
-.word > span { display: inline-block; transform: translateY(70%); }
-.hero.ready .word > span { transform: none; transition: transform .9s var(--ease); transition-delay: calc(.1s + var(--w) * 90ms); }
+.word > span { display: inline-block; }
+.js .word > span { transform: translateY(70%); }
+.js .hero.ready .word > span { transform: none; transition: transform .9s var(--ease); transition-delay: calc(.1s + var(--w) * 90ms); }
 .hero-title .grad .word > span { background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; background-size: 200% 100%; animation: shine 8s linear infinite; }
 
 .js .hero-art { opacity: 0; transform: scale(.92); }

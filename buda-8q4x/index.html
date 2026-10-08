@@ -7,7 +7,7 @@
 <meta name="referrer" content="no-referrer">
 <title>Panel VHP</title>
 <meta name="theme-color" content="#07060a">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%2307060a'/%3E%3Ctext x='32' y='42' font-family='Arial Black,sans-serif' font-size='24' font-weight='900' text-anchor='middle' fill='%23a899d6'%3EVHP%3C/text%3E%3C/svg%3E">
+<link rel="icon" type="image/png" href="../img/favicon.png">
 <link rel="preload" href="../fonts/hanken-grotesk.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="../fonts/unbounded.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="panel.css">
@@ -18,7 +18,7 @@
 
 <header class="top">
   <div class="wrap top-in">
-    <a class="logo" href="../" title="Volver a la tienda"><span class="mark">VHP</span><span class="tag">Panel</span></a>
+    <a class="logo" href="../" title="Volver a la tienda"><img class="logo-img" src="../img/logo-letras.webp" width="400" height="146" alt="VHP"><span class="tag">Panel</span></a>
     <div class="top-actions" id="top-actions" hidden>
       <a class="ghost-btn hide-sm" href="../" target="_blank" rel="noopener">Ver tienda</a>
       <button class="ghost-btn" type="button" id="refresh" aria-label="Actualizar datos" title="Actualizar">
@@ -34,9 +34,7 @@
   <!-- ============ ACCESO ============ -->
   <section class="login" id="login">
     <div class="login-card">
-      <div class="lock" aria-hidden="true">
-        <svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="3"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>
-      </div>
+      <img class="login-logo" src="../img/logo-sm.webp" width="300" height="285" alt="VHP Vapes">
       <h1>Hola, Buda</h1>
       <p class="muted">Este panel es privado. Ingresá tu clave de GoatCounter para ver las analíticas.</p>
       <form id="login-form" autocomplete="off">

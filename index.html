@@ -19,7 +19,8 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://vapehpilar.github.io/img/compartir.jpg">
 <link rel="canonical" href="https://vapehpilar.github.io/">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%2307060a'/%3E%3Ctext x='32' y='42' font-family='Arial Black,sans-serif' font-size='24' font-weight='900' text-anchor='middle' fill='%23a899d6'%3EVHP%3C/text%3E%3C/svg%3E">
+<link rel="icon" type="image/png" href="img/favicon.png">
+<link rel="apple-touch-icon" href="img/apple-touch-icon.png">
 <link rel="preload" href="fonts/hanken-grotesk.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="fonts/unbounded.woff2" as="font" type="font/woff2" crossorigin>
 <script>document.documentElement.classList.add("js");</script>
@@ -36,7 +37,7 @@
 <header class="top" id="top">
   <div class="wrap top-in">
     <a class="logo" href="#inicio" aria-label="VHP, Vape House Pilar">
-      <span class="logo-mark">VHP</span>
+      <img class="logo-img" src="img/logo-letras.webp" width="400" height="146" alt="VHP">
       <span class="logo-sub">Vape House Pilar</span>
     </a>
     <nav class="nav" aria-label="Principal">
@@ -61,7 +62,7 @@
     <div class="wrap hero-grid">
       <div class="hero-copy">
         <p class="eyebrow"><span class="dot"></span> Pedidos abiertos · Pilar, Bs. As.</p>
-        <h1 class="hero-title">Tu vape,<br><span class="grad">en un toque.</span></h1>
+        <h1 class="hero-title"><span class="word"><span style="--w:0">Tu</span></span> <span class="word"><span style="--w:1">vape,</span></span><br><span class="grad"><span class="word"><span style="--w:2">en</span></span> <span class="word"><span style="--w:3">un</span></span> <span class="word"><span style="--w:4">toque.</span></span></span></h1>
         <p class="lead">Elfbar, Ignite y Reing Bar. Elegí el modelo, armá tu pedido y mandalo por WhatsApp en un minuto.</p>
         <div class="actions">
           <a class="btn primary" href="#productos">
@@ -218,9 +219,8 @@
 
 <footer class="foot">
   <div class="wrap foot-in">
-    <div>
-      <p class="logo-mark">VHP</p>
-      <p>Vape House Pilar</p>
+    <div class="foot-brand">
+      <img class="foot-logo" src="img/logo.webp" width="560" height="532" alt="VHP Vapes · Vape House Pilar" loading="lazy" decoding="async">
     </div>
     <div class="legal">
       <p><strong>+18</strong> Venta exclusiva a mayores de 18 años.</p>
@@ -330,6 +330,7 @@
 <!-- ============ +18 ============ -->
 <dialog id="age" aria-labelledby="age-title">
   <div id="age-ask">
+    <img class="age-logo" src="img/logo-sm.webp" width="300" height="285" alt="VHP Vapes" fetchpriority="high">
     <p class="age-badge">+18</p>
     <h2 id="age-title">¿Tenés 18 años o más?</h2>
     <p>Esta página vende productos con nicotina y es solo para mayores de edad.</p>
@@ -339,6 +340,7 @@
     </div>
   </div>
   <div id="age-denied" hidden>
+    <img class="age-logo" src="img/logo-sm.webp" width="300" height="285" alt="VHP Vapes">
     <p class="age-badge">+18</p>
     <h2>No podés entrar</h2>
     <p>Esta página es solo para mayores de 18 años.</p>
