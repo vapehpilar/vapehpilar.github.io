@@ -13,30 +13,7 @@
 
   // ---------- Portada: título palabra por palabra ----------
   var hero = $(".hero");
-  var title = $(".hero-title");
-  if (title && !reduce) {
-    var w = 0;
-    (function split(node) {
-      Array.prototype.slice.call(node.childNodes).forEach(function (n) {
-        if (n.nodeType === 3) {
-          var frag = document.createDocumentFragment();
-          n.textContent.split(/(\s+)/).forEach(function (part) {
-            if (!part) return;
-            if (/^\s+$/.test(part)) { frag.appendChild(document.createTextNode(part)); return; }
-            var outer = document.createElement("span"), inner = document.createElement("span");
-            outer.className = "word";
-            inner.textContent = part;
-            inner.style.setProperty("--w", w++);
-            outer.appendChild(inner);
-            frag.appendChild(outer);
-          });
-          node.replaceChild(frag, n);
-        } else if (n.nodeType === 1 && n.tagName !== "BR") {
-          split(n);
-        }
-      });
-    })(title);
-  }
+  // El título ya viene separado en palabras desde el HTML (así se pinta de entrada).
   if (hero) requestAnimationFrame(function () { requestAnimationFrame(function () { hero.classList.add("ready"); }); });
 
   // ---------- Vapor que sube ----------

@@ -92,7 +92,9 @@ a, button, label, summary { -webkit-tap-highlight-color: transparent; }
 }
 .top.scrolled { border-bottom-color: var(--line); background: rgba(7, 6, 10, .85); }
 .top-in { display: flex; align-items: center; gap: 24px; height: var(--top-h); }
-.logo { display: flex; align-items: baseline; gap: 10px; text-decoration: none; }
+.logo { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+.logo-img { height: 36px; width: auto; }
+@media (min-width: 860px) { .logo-img { height: 42px; } }
 .logo-mark { font: 800 1.3rem/1 var(--display); letter-spacing: -.04em; background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
 .logo-sub { color: var(--muted); font-size: .85rem; font-weight: 500; }
 .nav { margin-left: auto; display: flex; gap: 4px; }
@@ -276,7 +278,8 @@ h2 { font: 700 clamp(1.7rem, 5.5vw, 2.6rem)/1.1 var(--display); letter-spacing: 
 /* ---------- Footer ---------- */
 .foot { border-top: 1px solid var(--line); padding: 34px 0 calc(92px + env(safe-area-inset-bottom, 0px)); color: var(--muted); font-size: .9rem; }
 .foot-in { display: grid; gap: 18px; }
-.foot .logo-mark { font-size: 1.6rem; margin-bottom: 4px; display: inline-block; }
+.foot-brand { display: flex; flex-direction: column; align-items: flex-start; }
+.foot-logo { width: 210px; height: auto; margin: -14px 0 0 -14px; }
 .legal p + p { margin-top: 4px; }
 .credit { -webkit-user-select: none; user-select: none; margin-top: 26px; text-align: center; font-size: .62rem; letter-spacing: .14em; text-transform: uppercase; color: var(--faint); opacity: .45; }
 .legal strong { display: inline-grid; place-items: center; min-width: 34px; height: 22px; margin-right: 6px; border-radius: 6px; border: 1px solid var(--danger); color: var(--danger); font-size: .75rem; }
@@ -429,7 +432,8 @@ textarea { min-height: 76px; resize: vertical; }
 #age { width: min(92vw, 420px); margin: auto; text-align: center; }
 #age > div { background: var(--surface); border: 1px solid var(--line); border-radius: 28px; padding: 34px 26px 28px; }
 #age::backdrop { background: rgba(4, 3, 7, .96); }
-.age-badge { display: inline-grid; place-items: center; width: 68px; height: 68px; border-radius: 50%; margin-bottom: 18px; font: 800 1.3rem var(--display); background: var(--grad); color: var(--on-violet); }
+.age-logo { display: block; width: 168px; height: auto; margin: -14px auto 4px; }
+.age-badge { display: inline-grid; place-items: center; height: 28px; padding: 0 12px; border-radius: 999px; margin-bottom: 14px; font: 800 .85rem var(--display); background: var(--grad); color: var(--on-violet); }
 #age h2 { font-size: 1.45rem; }
 #age p { color: var(--muted); margin-top: 10px; }
 #age .age-badge { color: var(--on-violet); margin-top: 0; }
