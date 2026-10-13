@@ -58,6 +58,12 @@
     return p.img || "img/" + slug(p.marca + " " + p.nombre) + ".webp";
   }
   // Si la foto no existe (o no carga) se reemplaza por la ilustración.
+  // Marca las fotos ya cargadas (mientras tanto se ve un brillo animado).
+  document.addEventListener("load", function (e) {
+    var el = e.target;
+    if (el && el.tagName === "IMG" && el.hasAttribute("data-photo")) el.classList.add("ok");
+  }, true);
+
   document.addEventListener("error", function (e) {
     var el = e.target, pid = el && el.getAttribute && el.getAttribute("data-photo");
     if (!pid) return;
@@ -125,6 +131,12 @@
 
   // ---------- WhatsApp en links fijos ----------
   $$("[data-wa]").forEach(function (a) { a.href = wa(a.getAttribute("data-wa")); });
+  // Instagram: un solo lugar para cambiar el usuario (js/productos.js).
+  $$("[data-ig]").forEach(function (a) {
+    if (!CFG.instagram) { a.hidden = true; return; }
+    a.href = "https://www.instagram.com/" + CFG.instagram + "/";
+    if (a.hasAttribute("data-ig-text")) a.textContent = "@" + CFG.instagram;
+  });
 
   // ---------- analíticas (GoatCounter) ----------
   // Cuenta visitas sin cookies. Las ve solo el dueño, desde el panel secreto.
@@ -341,6 +353,7 @@
     $(".pick-head", pickDlg).style.setProperty("--c", brandColor(p));
     $(".pick-head", pickDlg).style.setProperty("--pc", tint(p));
     $("#pick-art").innerHTML = art(p, "100px");
+    $("#pick-art").setAttribute("aria-label", "Ver foto grande de " + p.marca + " " + p.nombre);
     $("#pick-brand").textContent = p.marca;
     $("#pick-title").textContent = p.nombre;
     $("#pick-meta").textContent = p.pitadas ? num(p.pitadas) + " pitadas · Descartable" : "Descartable";
@@ -356,6 +369,24 @@
     // La dirección pasa a ser el link directo de este vape (para copiar o compartir).
     try { history.replaceState(null, "", "#" + slugOf(p)); } catch (e) {}
   }
+
+  // ---------- foto en grande ----------
+  var zoomDlg = $("#zoom");
+  function openZoom() {
+    var p = byId[pick.pid];
+    if (!p) return;
+    var src = photoOf(p);
+    $("#zoom-img").innerHTML = src && !noPhoto[p.id]
+      ? '<img src="' + esc(src) + '" alt="' + esc(p.marca + " " + p.nombre) + '" width="600" height="720">'
+      : drawing(p);
+    $("#zoom-img").style.setProperty("--pc", tint(p));
+    $("#zoom-cap").textContent = p.marca + " " + p.nombre + " · " + fmt(p.precio);
+    openDlg(zoomDlg);
+    track("foto-grande/" + slugOf(p), "Foto grande: " + p.marca + " " + p.nombre);
+  }
+  $("#pick-art").addEventListener("click", openZoom);
+  zoomDlg.addEventListener("click", function () { closeDlg(zoomDlg); });
+  $("#pick-art").addEventListener("keydown", function (e) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openZoom(); } });
 
   // ---------- links directos: vapehpilar.github.io/#elfbar-summer ----------
   function slugOf(p) { return slug(p.marca + " " + p.nombre); }
@@ -478,6 +509,12 @@
 
     var empty = !lines.length;
     $("#cart-empty").hidden = !empty;
+    var prev = lastOrder();
+    $("#repeat-box").hidden = !(empty && prev);
+    $("#repeat-pill").hidden = !(empty && prev);
+    if (prev) $("#repeat-sum").textContent = prev.lines.map(function (l) {
+      return l.qty + " × " + byId[l.pid].marca + " " + byId[l.pid].nombre;
+    }).join(" · ") + " — " + fmt(prev.lines.reduce(function (s, l) { return s + l.qty * byId[l.pid].precio; }, 0)) + " (precios de hoy)";
     $("#datos").hidden = empty;
     $("#cart-foot").hidden = empty;
     $("#cart-items").innerHTML = empty ? "" : lines.map(itemHtml).join("") +
@@ -509,6 +546,26 @@
     $("#productos").scrollIntoView({ behavior: "smooth" });
   }
   $("#go-shop").addEventListener("click", goShop);
+
+  // ---------- repetir el último pedido ----------
+  var LAST_KEY = "vhp-ultimo-pedido";
+  function lastOrder() {
+    var o = store.get(LAST_KEY);
+    if (!o || !Array.isArray(o.lines)) return null;
+    var ls = sanitize(o.lines);
+    return ls.length ? { lines: ls, date: o.date } : null;
+  }
+  function repeatLast() {
+    var o = lastOrder();
+    if (!o) return;
+    lines = o.lines.map(function (l) { return { pid: l.pid, flavor: l.flavor, qty: l.qty }; });
+    save();
+    renderCart();
+    refreshBadges();
+    bump();
+    track("repetir-pedido", "Repitió su último pedido");
+    openCart();
+  }
 
   function openCart() {
     renderCart();
@@ -588,6 +645,7 @@
       return;
     }
     var tt = totals();
+    store.set(LAST_KEY, { lines: lines, date: Date.now() });
     track("pedido-enviado", "Pedido enviado por WhatsApp");
     track("pedido-unidades/" + tt.n, "Pedido de " + tt.n + (tt.n === 1 ? " vape" : " vapes"));
     track("pedido-monto/" + tt.t, "Pedido de " + fmt(tt.t));
@@ -603,6 +661,8 @@
       renderCatalog();
       return;
     }
+    if (e.target.closest("[data-repeat]")) { repeatLast(); return; }
+    if (e.target.closest("[data-ig]")) track("instagram", "Abrió Instagram");
     var pk = e.target.closest("[data-pick]");
     if (pk) { openPick(pk.getAttribute("data-pick"), pk); return; }
     if (e.target.closest("[data-reset]")) {
@@ -666,6 +726,27 @@
     $("#age-ask").hidden = true;
     $("#age-denied").hidden = false;
   });
+
+  // ---------- menú: marca la sección que estás viendo ----------
+  (function scrollspy() {
+    var links = $$('.nav a[href^="#"]');
+    if (!links.length || !("IntersectionObserver" in window)) return;
+    var map = {};
+    links.forEach(function (a) { var s = $(a.getAttribute("href")); if (s) map[s.id] = a; });
+    var seen = {};
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) { seen[en.target.id] = en.isIntersecting ? en.intersectionRatio : 0; });
+      var best = null;
+      Object.keys(seen).forEach(function (id) { if (seen[id] > 0 && (!best || seen[id] > seen[best])) best = id; });
+      links.forEach(function (a) { a.classList.toggle("active", !!best && map[best] === a); });
+    }, { threshold: [0, 0.15, 0.3, 0.5, 0.75], rootMargin: "-20% 0px -40% 0px" });
+    Object.keys(map).forEach(function (id) { io.observe($("#" + id)); });
+  })();
+
+  // ---------- app instalable (funciona también sin señal) ----------
+  if ("serviceWorker" in navigator && (location.protocol === "https:" || location.hostname === "localhost")) {
+    window.addEventListener("load", function () { navigator.serviceWorker.register("sw.js").catch(function () {}); });
+  }
 
   // ---------- inicio ----------
   renderChips();

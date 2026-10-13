@@ -1,0 +1,15 @@
+{
+  "name": "VHP · Vape House Pilar",
+  "short_name": "VHP",
+  "description": "Elegí tu vape, armá tu pedido y mandalo por WhatsApp.",
+  "lang": "es-AR",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#07060a",
+  "theme_color": "#07060a",
+  "icons": [
+    { "src": "img/icono-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "img/icono-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}

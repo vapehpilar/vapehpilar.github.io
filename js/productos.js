@@ -6,6 +6,7 @@
 
 window.VHP_CONFIG = {
   whatsapp: "5491166634064", // +54 9 11 6663-4064
+  instagram: "__felipe.garciaa", // usuario de Instagram, sin @
   tienda: "Vape House Pilar",
   // Código de la cuenta de GoatCounter (analíticas). Vacío = no se cuentan visitas.
   goatcounter: "vapehpilar",
