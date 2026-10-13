@@ -13,7 +13,9 @@ window.VHP_CONFIG = {
   // Panel secreto del dueño (5 toques en "hecho por buda" del pie).
   panel: "buda-8q4x/",
   // Vapes que flotan en la portada (izquierda, centro, derecha), como "Marca Modelo".
-  portada: ["Elfbar Trio", "Elfbar Summer", "Reing Bar 50k"]
+  portada: ["Elfbar Trio", "Elfbar Summer", "Reing Bar 50k"],
+  // Vapes que aparecen grandes en "Destacados", como "Marca Modelo".
+  destacados: ["Elfbar Summer", "Elfbar Ice King", "Ignite V400 Ice"]
 };
 
 /* Catálogo.

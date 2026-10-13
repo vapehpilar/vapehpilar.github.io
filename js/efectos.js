@@ -16,39 +16,107 @@
   // El título ya viene separado en palabras desde el HTML (así se pinta de entrada).
   if (hero) requestAnimationFrame(function () { requestAnimationFrame(function () { hero.classList.add("ready"); }); });
 
-  // ---------- Vapor que sube ----------
-  if (hero && !reduce) {
-    var puffs = document.createElement("div");
-    puffs.className = "puffs";
-    puffs.setAttribute("aria-hidden", "true");
-    var n = finePointer ? 14 : 8;
-    for (var i = 0; i < n; i++) {
-      var p = document.createElement("i");
-      var s = 60 + Math.random() * 140;
-      p.style.cssText = "--s:" + s + "px;--x:" + (Math.random() * 100) + "%;--d:" + (12 + Math.random() * 14) + "s;--dl:-" +
-        (Math.random() * 20) + "s;--dx:" + (Math.random() * 160 - 80) + "px";
-      puffs.appendChild(p);
-    }
-    hero.appendChild(puffs);
-  }
+  // ---------- Humo violeta animado en la portada ----------
+  (function smoke() {
+    var cv = $("#smoke");
+    if (!cv || !hero || !cv.getContext) return;
+    var ctx = cv.getContext("2d");
+    var SCALE = 0.5; // se dibuja a media resolución: el humo es borroso y así rinde mucho más
+    var W = 0, H = 0, parts = [], running = false, visible = true, t0 = 0;
+    var COLORS = [[168, 120, 255], [229, 155, 208], [110, 95, 230], [190, 150, 255], [140, 90, 220]];
+    var sprites = COLORS.map(function (c) {
+      var o = document.createElement("canvas"); o.width = o.height = 128;
+      var g = o.getContext("2d"), gr = g.createRadialGradient(64, 64, 0, 64, 64, 64);
+      gr.addColorStop(0, "rgba(" + c + ",.9)"); gr.addColorStop(.35, "rgba(" + c + ",.35)"); gr.addColorStop(1, "rgba(" + c + ",0)");
+      g.fillStyle = gr; g.fillRect(0, 0, 128, 128);
+      return o;
+    });
+    var wide = matchMedia("(min-width: 860px)");
+    var max = finePointer ? 80 : 46;
+    var ptr = { x: -9999, y: -9999, vx: 0, vy: 0, on: false };
 
-  // ---------- Números de la portada que cuentan ----------
-  function countUp(el, to, prefix, suffix) {
-    if (reduce) return;
-    var start = null, dur = 1400;
-    function step(t) {
-      if (!start) start = t;
-      var k = Math.min(1, (t - start) / dur), e = 1 - Math.pow(1 - k, 3);
-      el.textContent = prefix + Math.round(to * e) + suffix;
-      if (k < 1) requestAnimationFrame(step);
+    function size() {
+      var r = hero.getBoundingClientRect();
+      W = Math.max(1, Math.round(r.width * SCALE)); H = Math.max(1, Math.round(r.height * SCALE));
+      cv.width = W; cv.height = H;
     }
-    el.textContent = prefix + "0" + suffix;
-    setTimeout(function () { requestAnimationFrame(step); }, 800);
-  }
-  $$(".stats strong").forEach(function (el) {
-    var m = el.textContent.match(/^(\D*)(\d+)(\D*)$/);
-    if (m) countUp(el, +m[2], m[1], m[3]);
-  });
+    // De dónde sale el humo: detrás de los vapes (a la derecha en compu, abajo en celular) y del piso.
+    function spawn(x, y, big) {
+      if (x == null) {
+        if (Math.random() < 0.6) {
+          x = wide.matches ? W * (0.58 + Math.random() * 0.36) : W * (0.15 + Math.random() * 0.7);
+          y = wide.matches ? H * (0.55 + Math.random() * 0.3) : H * (0.78 + Math.random() * 0.2);
+        } else { x = Math.random() * W; y = H + 20; }
+      }
+      parts.push({
+        x: x, y: y, r: (big ? 26 : 14) + Math.random() * (big ? 40 : 26), grow: 0.08 + Math.random() * 0.16,
+        vx: (Math.random() - 0.5) * 0.25, vy: -(0.12 + Math.random() * 0.35), life: 0, max: 380 + Math.random() * 520,
+        seed: Math.random() * 1000, spr: sprites[(Math.random() * sprites.length) | 0], a: 0.16 + Math.random() * 0.18
+      });
+    }
+    function draw(p) {
+      var k = p.life / p.max;
+      ctx.globalAlpha = Math.max(0, p.a * Math.min(1, k * 5) * (1 - k));
+      ctx.drawImage(p.spr, p.x - p.r, p.y - p.r, p.r * 2, p.r * 2);
+    }
+    function step(now) {
+      if (!running) return;
+      var t = (now - t0) / 1000;
+      ctx.clearRect(0, 0, W, H);
+      ctx.globalCompositeOperation = "lighter";
+      while (parts.length < max) spawn(null, null, true);
+      for (var i = parts.length - 1; i >= 0; i--) {
+        var p = parts[i];
+        p.life++;
+        // ondulación tipo humo
+        p.vx += Math.sin(t * 0.7 + p.seed) * 0.004 + Math.cos(p.y * 0.02 + p.seed) * 0.003;
+        // el dedo o el mouse empuja el humo
+        if (ptr.on) {
+          var dx = p.x - ptr.x, dy = p.y - ptr.y, d = Math.sqrt(dx * dx + dy * dy), R = 70;
+          if (d < R) { var f = (1 - d / R) * 0.5; p.vx += (dx / (d + 1)) * f + ptr.vx * 0.02; p.vy += (dy / (d + 1)) * f + ptr.vy * 0.02; }
+        }
+        p.vx *= 0.985; p.vy = p.vy * 0.985 - 0.002;
+        p.x += p.vx; p.y += p.vy; p.r += p.grow;
+        if (p.life >= p.max || p.y + p.r < -40) { parts.splice(i, 1); continue; }
+        draw(p);
+      }
+      ctx.globalAlpha = 1;
+      ptr.vx *= 0.9; ptr.vy *= 0.9;
+      requestAnimationFrame(step);
+    }
+    function start() { if (running || reduce) return; running = true; t0 = performance.now(); requestAnimationFrame(step); }
+    function stop() { running = false; }
+
+    size();
+    // Arranca con humo ya presente, repartido en distintas edades.
+    for (var i = 0; i < max; i++) {
+      spawn(null, null, true);
+      var q = parts[parts.length - 1];
+      q.life = Math.random() * q.max * 0.8; q.y -= Math.random() * H * 0.8; q.r += q.life * q.grow;
+    }
+    if (reduce) { ctx.globalCompositeOperation = "lighter"; parts.forEach(draw); return; } // sin movimiento: un cuadro quieto
+    addEventListener("resize", size, { passive: true });
+    hero.addEventListener("pointermove", function (e) {
+      var r = hero.getBoundingClientRect(), x = (e.clientX - r.left) * SCALE, y = (e.clientY - r.top) * SCALE;
+      ptr.vx = x - ptr.x; ptr.vy = y - ptr.y; ptr.x = x; ptr.y = y; ptr.on = true;
+      if (Math.random() < 0.35 && parts.length < max + 30) spawn(x, y, false); // estela al mover
+    }, { passive: true });
+    hero.addEventListener("pointerleave", function () { ptr.on = false; });
+    if ("IntersectionObserver" in window) {
+      new IntersectionObserver(function (en) { visible = en[0].isIntersecting; if (visible && !document.hidden && ready) start(); else stop(); }).observe(hero);
+    }
+    document.addEventListener("visibilitychange", function () { if (!document.hidden && visible && ready) start(); else stop(); });
+    // Arranca cuando la página terminó de cargar y ya no está el cartel de +18 (detrás no se ve).
+    var ready = false;
+    function go() {
+      var gate = $("#age");
+      if (gate && gate.open) { gate.addEventListener("close", go, { once: true }); return; }
+      ready = true;
+      if (visible && !document.hidden) start();
+    }
+    if (document.readyState === "complete") setTimeout(go, 200);
+    else addEventListener("load", function () { setTimeout(go, 200); });
+  })();
 
   // ---------- Barra de progreso + parallax ----------
   var bar = document.createElement("div");
@@ -89,8 +157,6 @@
         f.style.marginLeft = (x * d) + "px";
         f.style.marginTop = (y * d) + "px";
       });
-      var orb = $(".orb", art);
-      if (orb) orb.style.transform = "translate(" + (x * -14) + "px," + (y * -14) + "px)";
     });
   }
 
@@ -182,8 +248,8 @@
   // ---------- Al abrir un producto: la foto sale de la tarjeta y se agranda ----------
   document.addEventListener("vhp:open", function (e) {
     if (reduce) return;
-    var card = e.detail.trigger && e.detail.trigger.closest && e.detail.trigger.closest(".card");
-    var src = card && $(".card-art img, .card-art svg", card);
+    var card = e.detail.trigger && e.detail.trigger.closest && e.detail.trigger.closest(".card, .feat");
+    var src = card && $(".card-art img, .card-art svg, .feat-art img, .feat-art svg", card);
     var dlg = $("#pick"), dest = $("#pick-art");
     if (!src || !dlg || !dest) return;
     var a = src.getBoundingClientRect();
