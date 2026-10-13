@@ -165,7 +165,7 @@
   // La tienda manda eventos con estos nombres; acá se agrupan.
   function digest(hits) {
     var d = {
-      orders: 0, wa: 0, amount: 0, units: 0, views: 0, adds: 0, funnelViews: 0, funnelAdds: 0,
+      orders: 0, wa: 0, amount: 0, units: 0, views: 0, adds: 0, funnelViews: 0, funnelAdds: 0, ig: 0, repeats: 0, zooms: 0,
       products: {}, links: {}, shares: {}, ordersDaily: {}
     };
     function prod(s) {
@@ -181,6 +181,9 @@
           (h.stats || []).forEach(function (s) { d.ordersDaily[s.day] = (d.ordersDaily[s.day] || 0) + (s.daily || 0); });
           break;
         case "consulta-whatsapp": d.wa += c; break;
+        case "instagram": d.ig += c; break;
+        case "repetir-pedido": d.repeats += c; break;
+        case "foto-grande": d.zooms += c; break;
         case "pedido-monto": d.amount += (+tail || 0) * c; break;
         case "pedido-unidades": d.units += (+tail || 0) * c; break;
         case "visto": prod(tail).seen += c; d.views += c; break;
@@ -513,6 +516,9 @@
     var links = [];
     Object.keys(D.links).forEach(function (s) { links.push({ name: "Abrieron link de " + (PROD[s] ? PROD[s].name : s), count: D.links[s] }); });
     Object.keys(D.shares).forEach(function (s) { links.push({ name: "Compartieron " + (PROD[s] ? PROD[s].name : s), count: D.shares[s] }); });
+    if (D.ig) links.push({ name: "Abrieron tu Instagram", count: D.ig });
+    if (D.repeats) links.push({ name: "Repitieron su último pedido", count: D.repeats });
+    if (D.zooms) links.push({ name: "Vieron una foto en grande", count: D.zooms });
     links.sort(function (a, b) { return b.count - a.count; });
     rank("#l-links", links.slice(0, 8), "Nadie abrió ni compartió links directos todavía.");
   }
