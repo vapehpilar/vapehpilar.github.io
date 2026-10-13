@@ -4,7 +4,7 @@
      y si no hay conexión, la última copia guardada.
    - Fotos y fuentes: la copia guardada (cargan al instante) y se actualizan por detrás.
    Para forzar que todos bajen todo de nuevo, cambiá VERSION. */
-var VERSION = "vhp-1";
+var VERSION = "vhp-2";
 var CORE = ["./", "index.html", "css/styles.css", "css/efectos.css", "js/productos.js", "js/app.js", "js/efectos.js",
   "fonts/hanken-grotesk.woff2", "fonts/unbounded.woff2", "img/logo-letras.webp", "img/logo-sm.webp", "img/favicon.png"];
 

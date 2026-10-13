@@ -174,8 +174,6 @@
     });
   })();
   $("#year").textContent = new Date().getFullYear();
-  $("#stat-models").textContent = PRODUCTS.length;
-  $("#stat-brands").textContent = BRANDS.length;
 
   // ---------- hero ----------
   (function heroArt() {
@@ -228,9 +226,9 @@
       return '<button class="tk" type="button" data-pick="' + p.id + '" tabindex="-1" style="--pc:' + tint(p) + '">' +
         '<span class="tk-img">' + art(p, "60px") + "</span>" +
         '<span class="tk-name"><small>' + esc(p.marca) + "</small>" + esc(p.nombre) + "</span></button>";
-    }).join('<span class="tk-sep">✦</span>');
+    }).join("");
     // Dos copias seguidas para que la cinta no tenga cortes.
-    track.innerHTML = items + '<span class="tk-sep">✦</span>' + items + '<span class="tk-sep">✦</span>';
+    track.innerHTML = items + items;
     track.classList.add("with-photos");
     track.style.animationDuration = PRODUCTS.length * 4.5 + "s";
   })();
@@ -285,6 +283,71 @@
       '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg><span>Agregar</span></button>' +
       "</div></div></li>";
   }
+
+  // ---------- destacados ----------
+  function byName(n) {
+    for (var i = 0; i < PRODUCTS.length; i++) if (norm(PRODUCTS[i].marca + " " + PRODUCTS[i].nombre) === norm(n)) return PRODUCTS[i];
+    return null;
+  }
+  function renderFeatured() {
+    var box = $("#featured");
+    var list = (CFG.destacados || []).map(byName).filter(Boolean).slice(0, 3);
+    if (!list.length) { $("#destacados").hidden = true; return; }
+    box.innerHTML = list.map(function (p, i) {
+      var name = p.marca + " " + p.nombre;
+      return '<li class="feat" style="--pc:' + tint(p) + ";--i:" + i + '" data-feat="' + p.id + '">' +
+        '<button class="feat-art" type="button" data-pick="' + p.id + '" aria-label="Ver ' + esc(name) + '">' + art(p, "(min-width: 860px) 340px, 80vw") + "</button>" +
+        '<div class="feat-body">' +
+        '<p class="card-brand">' + esc(p.marca) + "</p>" +
+        '<h3 class="feat-name">' + esc(p.nombre) + "</h3>" +
+        '<p class="card-meta">' + (p.pitadas ? num(p.pitadas) + " pitadas" : "Descartable") + "</p>" +
+        '<div class="feat-row"><span class="price">' + fmt(p.precio) + "</span>" +
+        '<button class="add" type="button" data-pick="' + p.id + '" aria-label="Agregar ' + esc(name) + ' al pedido">' +
+        '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg><span>Agregar</span></button></div>' +
+        "</div></li>";
+    }).join("");
+  }
+
+  // ---------- comparar ----------
+  var cmpDlg = $("#compare"), cmpSel = [];
+  function openCompare() {
+    if (!cmpSel.length) cmpSel = (CFG.destacados || []).map(byName).filter(Boolean).slice(0, 2).map(function (p) { return p.id; });
+    renderCompare();
+    openDlg(cmpDlg);
+    track("comparar", "Abrió el comparador");
+  }
+  function renderCompare() {
+    $("#cmp-pick").innerHTML = PRODUCTS.map(function (p) {
+      var on = cmpSel.indexOf(p.id) >= 0;
+      return '<button type="button" class="cmp-chip" data-cmp="' + p.id + '" aria-pressed="' + on + '" style="--pc:' + tint(p) + '">' +
+        '<span class="tk-img">' + art(p, "60px") + "</span><span>" + esc(p.marca) + " <b>" + esc(p.nombre) + "</b></span></button>";
+    }).join("");
+    $("#cmp-hint").textContent = cmpSel.length < 2 ? "Elegí 2 o 3 vapes para compararlos." : "Elegiste " + cmpSel.length + " de 3.";
+    var sel = cmpSel.map(function (id) { return byId[id]; });
+    if (sel.length < 2) { $("#cmp-table").innerHTML = ""; return; }
+    var cheapest = Math.min.apply(null, sel.map(function (p) { return p.precio; }));
+    var mostPuffs = Math.max.apply(null, sel.map(function (p) { return p.pitadas || 0; }));
+    var per = sel.map(function (p) { return p.pitadas ? p.precio / (p.pitadas / 1000) : null; });
+    var bestPer = Math.min.apply(null, per.filter(function (v) { return v != null; }).concat([Infinity]));
+    var col = function (fn) { return sel.map(fn).join(""); };
+    $("#cmp-table").innerHTML =
+      '<div class="cmp-grid" style="--n:' + sel.length + '">' +
+      col(function (p) { return '<div class="cmp-head" style="--pc:' + tint(p) + '"><div class="cmp-art">' + art(p, "140px") + '</div><p class="card-brand">' + esc(p.marca) + '</p><p class="cmp-name">' + esc(p.nombre) + "</p></div>"; }) +
+      '<p class="cmp-label">Precio</p>' + col(function (p) { return '<p class="cmp-val' + (p.precio === cheapest ? " best" : "") + '">' + fmt(p.precio) + (p.precio === cheapest ? "<small>Más barato</small>" : "") + "</p>"; }) +
+      '<p class="cmp-label">Pitadas</p>' + col(function (p) { return '<p class="cmp-val' + (p.pitadas && p.pitadas === mostPuffs ? " best" : "") + '">' + (p.pitadas ? num(p.pitadas) : "–") + (p.pitadas && p.pitadas === mostPuffs ? "<small>Más pitadas</small>" : "") + "</p>"; }) +
+      '<p class="cmp-label">Cada 1.000 pitadas</p>' + col(function (p, i) { return '<p class="cmp-val' + (per[i] != null && per[i] === bestPer ? " best" : "") + '">' + (per[i] != null ? fmt(Math.round(per[i])) : "–") + (per[i] != null && per[i] === bestPer ? "<small>Rinde más</small>" : "") + "</p>"; }) +
+      col(function (p) { return '<button class="add cmp-add" type="button" data-pick="' + p.id + '"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg><span>Agregar</span></button>'; }) +
+      "</div>";
+  }
+  $("#open-compare").addEventListener("click", openCompare);
+  cmpDlg.addEventListener("click", function (e) {
+    var c = e.target.closest("[data-cmp]");
+    if (!c) return;
+    var id = c.getAttribute("data-cmp"), i = cmpSel.indexOf(id);
+    if (i >= 0) cmpSel.splice(i, 1);
+    else { if (cmpSel.length >= 3) cmpSel.shift(); cmpSel.push(id); }
+    renderCompare();
+  });
 
   function renderCatalog() {
     var list = visibleProducts();
@@ -440,18 +503,18 @@
 
   // El botón "Agregar" de la tarjeta se transforma en un ✓ por un momento.
   function confirmAdd(pid) {
-    var b = $('[data-card="' + pid + '"] .add');
-    if (!b) return;
-    var label = $("span", b), icon = $("svg path", b);
-    b.classList.add("done");
-    if (label) label.textContent = "Agregado";
-    if (icon) icon.setAttribute("d", "M5 12.5l4.5 4.5L19 7.5");
-    clearTimeout(b._t);
-    b._t = setTimeout(function () {
-      b.classList.remove("done");
-      if (label) label.textContent = "Agregar";
-      if (icon) icon.setAttribute("d", "M12 5v14M5 12h14");
-    }, 1500);
+    $$('[data-card="' + pid + '"] .add, [data-feat="' + pid + '"] .add').forEach(function (b) {
+      var label = $("span", b), icon = $("svg path", b);
+      b.classList.add("done");
+      if (label) label.textContent = "Agregado";
+      if (icon) icon.setAttribute("d", "M5 12.5l4.5 4.5L19 7.5");
+      clearTimeout(b._t);
+      b._t = setTimeout(function () {
+        b.classList.remove("done");
+        if (label) label.textContent = "Agregar";
+        if (icon) icon.setAttribute("d", "M12 5v14M5 12h14");
+      }, 1500);
+    });
   }
 
   function updatePick() {
@@ -749,6 +812,7 @@
   }
 
   // ---------- inicio ----------
+  renderFeatured();
   renderChips();
   renderCatalog();
   renderCart();

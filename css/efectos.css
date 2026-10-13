@@ -32,19 +32,6 @@
 .js .hero-art { opacity: 0; transform: scale(.92); }
 .hero.ready .hero-art { opacity: 1; transform: none; transition: opacity 1.2s var(--ease) .3s, transform 1.2s var(--ease) .3s; }
 
-/* ---------- Vapor que sube en la portada ---------- */
-.puffs { position: absolute; inset: 0; z-index: -1; pointer-events: none; overflow: hidden; }
-.puffs i {
-  position: absolute; bottom: -60px; width: var(--s); height: var(--s); border-radius: 50%;
-  background: radial-gradient(circle, rgba(199, 187, 240, .22), rgba(199, 187, 240, 0) 70%);
-  left: var(--x); animation: rise var(--d) linear infinite; animation-delay: var(--dl);
-}
-@keyframes rise {
-  0% { transform: translate3d(0, 0, 0) scale(.6); opacity: 0; }
-  15% { opacity: 1; }
-  100% { transform: translate3d(var(--dx), -120vh, 0) scale(1.8); opacity: 0; }
-}
-
 /* Parallax de los vapes flotantes */
 .hero-art .float { will-change: transform; }
 .hero-art .orb { transition: transform .4s var(--ease); }
@@ -92,20 +79,6 @@
   background: var(--grad); transform: scaleX(0); transform-origin: 0 50%; transition: transform .9s var(--ease) .2s;
 }
 .sec-head.in h2::after { transform: scaleX(1); }
-.js .sec-head .kicker { opacity: 0; letter-spacing: .4em; transition: opacity .8s var(--ease), letter-spacing .8s var(--ease); }
-.js .sec-head.in .kicker { opacity: 1; letter-spacing: .14em; }
-
-/* ---------- Íconos de beneficios con pulso suave ---------- */
-.perk-ic { position: relative; }
-.perk.in .perk-ic::after {
-  content: ""; position: absolute; inset: 0; border-radius: inherit; border: 1px solid var(--violet);
-  animation: ring 2.6s var(--ease) infinite;
-}
-@keyframes ring { 0% { transform: scale(1); opacity: .7; } 100% { transform: scale(1.7); opacity: 0; } }
-
-/* Números de los pasos que se llenan */
-.step-n { background-size: 200% 100%; transition: background-position 1.2s var(--ease); background-position: 100% 0; }
-.step.in .step-n { background-position: 0 0; }
 
 /* ---------- Botón de WhatsApp con latido ---------- */
 .fab::before {
@@ -123,7 +96,7 @@
 }
 .halo.on { opacity: 1; }
 
-/* ---------- Fondo vivo: degradé que se mueve lento + grano ---------- */
+/* ---------- Fondo vivo: degradé que se mueve lento ---------- */
 html { background: var(--bg); }
 body { background: transparent; }
 body::before {
@@ -140,10 +113,7 @@ body::before {
   50% { transform: translate3d(-6%, 4%, 0) rotate(8deg); }
   100% { transform: translate3d(5%, -5%, 0) rotate(-6deg); }
 }
-body::after {
-  content: ""; position: fixed; inset: 0; z-index: 90; pointer-events: none; opacity: .05;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .9 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-}
+
 
 /* ---------- Foto que se agranda al abrir un producto ---------- */
 .zoom-clone { position: fixed; z-index: 100; pointer-events: none; margin: 0; }
@@ -182,8 +152,7 @@ body::after {
 @keyframes addPop { 40% { transform: scale(1.08); } }
 
 @media (prefers-reduced-motion: reduce) {
-  .progress, .puffs, .halo, .ripple, .spark, .fly, .zoom-clone { display: none !important; }
+  .progress, .halo, .ripple, .spark, .fly, .zoom-clone { display: none !important; }
   body::before { animation: none; }
   .word > span, .js .hero .eyebrow, .js .hero .lead, .js .hero .actions, .js .hero .stats, .js .hero-art { opacity: 1 !important; transform: none !important; }
-  .js .sec-head .kicker { opacity: 1; letter-spacing: .14em; }
 }
