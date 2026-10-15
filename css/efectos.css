@@ -151,6 +151,25 @@ body::before {
 .add.done { background: #6fe3a6; color: #062b14; animation: addPop .45s var(--ease); }
 @keyframes addPop { 40% { transform: scale(1.08); } }
 
+/* ---------- Modo liviano (compus de bajos recursos) ----------
+   Se activa solo si el equipo no tiene placa de video o la página va lenta.
+   Se ve igual de linda, pero quieta: nada se redibuja en cada cuadro. */
+.lite body::before { animation: none; }
+.lite .halo, .lite .progress { display: none !important; }
+.lite .float { animation: none; filter: none; }
+.lite .float::before { filter: none; opacity: .5; }
+.lite .ticker-track { animation: none !important; }
+.lite .ticker { overflow-x: auto; scrollbar-width: none; }
+.lite .ticker::-webkit-scrollbar { display: none; }
+.lite .grad, .lite .hero-title .grad .word > span { animation: none; }
+.lite .fab::before { display: none; }
+.lite .top { -webkit-backdrop-filter: none; backdrop-filter: none; background: rgba(7, 6, 10, .95); }
+.lite dialog::backdrop { -webkit-backdrop-filter: none; backdrop-filter: none; background: rgba(4, 3, 7, .9); }
+.lite .tag { -webkit-backdrop-filter: none; backdrop-filter: none; background: rgba(7, 6, 10, .85); }
+.lite .card-art::before, .lite .pick-art::before, .lite .item-art::before, .lite .tk-img::before, .lite .feat-art::before { animation: none; }
+.lite .card:hover, .lite .feat:hover { transform: none; }
+.lite .card-art svg, .lite .feat-art img { filter: none; }
+
 @media (prefers-reduced-motion: reduce) {
   .progress, .halo, .ripple, .spark, .fly, .zoom-clone { display: none !important; }
   body::before { animation: none; }
