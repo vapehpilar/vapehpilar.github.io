@@ -9,6 +9,33 @@
   var reduce = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
   var finePointer = window.matchMedia && matchMedia("(hover: hover) and (pointer: fine)").matches;
   var $ = function (s, r) { return (r || document).querySelector(s); };
+
+  // ---------- Modo liviano para compus de bajos recursos ----------
+  // Si el equipo no tiene placa de video (dibuja todo el procesador) o los cuadros
+  // vienen lentos, se apagan las animaciones pesadas y el humo queda quieto.
+  var root = document.documentElement;
+  var lite = root.classList.contains("lite");
+  function goLite() {
+    if (lite) return;
+    lite = true;
+    root.classList.add("lite");
+    try { sessionStorage.setItem("vhp-lite", "1"); } catch (e) {}
+    document.dispatchEvent(new CustomEvent("vhp:lite"));
+  }
+  (function detect() {
+    if (lite) return;
+    if ((navigator.hardwareConcurrency || 8) <= 2 || (navigator.deviceMemory || 8) <= 2) return goLite();
+    try {
+      var c = document.createElement("canvas");
+      var gl = c.getContext("webgl") || c.getContext("experimental-webgl");
+      if (!gl) return goLite();
+      var info = gl.getExtension("WEBGL_debug_renderer_info");
+      var name = info ? String(gl.getParameter(info.UNMASKED_RENDERER_WEBGL)) : "";
+      var lose = gl.getExtension("WEBGL_lose_context");
+      if (lose) lose.loseContext();
+      if (/swiftshader|llvmpipe|softpipe|software|basic render/i.test(name)) goLite();
+    } catch (e) {}
+  })();
   var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
 
   // ---------- Portada: título palabra por palabra ----------
@@ -21,7 +48,7 @@
     var cv = $("#smoke");
     if (!cv || !hero || !cv.getContext) return;
     var ctx = cv.getContext("2d");
-    var SCALE = 0.5; // se dibuja a media resolución: el humo es borroso y así rinde mucho más
+    var SCALE = 0.4; // se dibuja a baja resolución: el humo es borroso y así rinde mucho más
     var W = 0, H = 0, parts = [], running = false, visible = true, t0 = 0;
     var COLORS = [[168, 120, 255], [229, 155, 208], [110, 95, 230], [190, 150, 255], [140, 90, 220]];
     var sprites = COLORS.map(function (c) {
@@ -32,7 +59,7 @@
       return o;
     });
     var wide = matchMedia("(min-width: 860px)");
-    var max = finePointer ? 80 : 46;
+    var max = finePointer ? 56 : 34;
     var ptr = { x: -9999, y: -9999, vx: 0, vy: 0, on: false };
 
     function size() {
@@ -59,8 +86,20 @@
       ctx.globalAlpha = Math.max(0, p.a * Math.min(1, k * 5) * (1 - k));
       ctx.drawImage(p.spr, p.x - p.r, p.y - p.r, p.r * 2, p.r * 2);
     }
+    var lastDraw = 0, lastTick = 0, slow = 0, ticks = 0;
     function step(now) {
       if (!running) return;
+      // Medidor: si los cuadros vienen lentos de forma sostenida, se pasa a modo liviano.
+      if (lastTick) {
+        var gap = now - lastTick;
+        ticks++;
+        if (gap > 45) slow++;
+        if (ticks >= 40) { if (slow > 24) { goLite(); return; } ticks = 0; slow = 0; }
+      }
+      lastTick = now;
+      requestAnimationFrame(step);
+      if (now - lastDraw < 32) return; // con 30 cuadros por segundo alcanza para el humo
+      lastDraw = now;
       var t = (now - t0) / 1000;
       ctx.clearRect(0, 0, W, H);
       ctx.globalCompositeOperation = "lighter";
@@ -82,9 +121,9 @@
       }
       ctx.globalAlpha = 1;
       ptr.vx *= 0.9; ptr.vy *= 0.9;
-      requestAnimationFrame(step);
     }
-    function start() { if (running || reduce) return; running = true; t0 = performance.now(); requestAnimationFrame(step); }
+    function still() { ctx.clearRect(0, 0, W, H); ctx.globalCompositeOperation = "lighter"; parts.forEach(draw); ctx.globalAlpha = 1; }
+    function start() { if (running || reduce || lite) return; running = true; t0 = performance.now(); lastTick = 0; requestAnimationFrame(step); }
     function stop() { running = false; }
 
     size();
@@ -94,9 +133,12 @@
       var q = parts[parts.length - 1];
       q.life = Math.random() * q.max * 0.8; q.y -= Math.random() * H * 0.8; q.r += q.life * q.grow;
     }
-    if (reduce) { ctx.globalCompositeOperation = "lighter"; parts.forEach(draw); return; } // sin movimiento: un cuadro quieto
-    addEventListener("resize", size, { passive: true });
+    if (reduce) { still(); return; } // sin movimiento: un cuadro quieto
+    if (lite) still();
+    document.addEventListener("vhp:lite", function () { stop(); still(); });
+    addEventListener("resize", function () { size(); if (lite) still(); }, { passive: true });
     hero.addEventListener("pointermove", function (e) {
+      if (lite) return;
       var r = hero.getBoundingClientRect(), x = (e.clientX - r.left) * SCALE, y = (e.clientY - r.top) * SCALE;
       ptr.vx = x - ptr.x; ptr.vy = y - ptr.y; ptr.x = x; ptr.y = y; ptr.on = true;
       if (Math.random() < 0.35 && parts.length < max + 30) spawn(x, y, false); // estela al mover
@@ -124,9 +166,12 @@
   bar.setAttribute("aria-hidden", "true");
   document.body.appendChild(bar);
   var floats = $$(".hero-art .float");
+  // Posición de cada vape flotante: parallax del scroll + seguimiento del mouse, todo con translate.
+  var fl = floats.map(function () { return { sy: 0, px: 0, py: 0 }; });
+  function place(i) { floats[i].style.translate = fl[i].px + "px " + (fl[i].py + fl[i].sy) + "px"; }
   var wide = window.matchMedia("(min-width: 860px)");
   wide.addEventListener && wide.addEventListener("change", function () {
-    if (!wide.matches) floats.forEach(function (f) { f.style.translate = ""; });
+    if (!wide.matches) floats.forEach(function (f, i) { fl[i].sy = 0; place(i); });
   });
   var ticking = false;
   function onScroll() {
@@ -138,7 +183,7 @@
       // Parallax solo en pantallas anchas: en celular los vapes están debajo del texto
       // y, si suben, lo tapan.
       if (!reduce && floats.length && wide.matches && scrollY < innerHeight * 1.2) {
-        floats.forEach(function (f, i) { f.style.translate = "0 " + (-scrollY * (0.12 + i * 0.07)) + "px"; });
+        floats.forEach(function (f, i) { fl[i].sy = -scrollY * (0.12 + i * 0.07); place(i); });
       }
       ticking = false;
     });
@@ -150,19 +195,20 @@
   var art = $(".hero-art");
   if (art && finePointer && !reduce) {
     hero.addEventListener("pointermove", function (e) {
+      if (lite) return;
       var r = hero.getBoundingClientRect();
       var x = (e.clientX - r.left) / r.width - 0.5, y = (e.clientY - r.top) / r.height - 0.5;
       floats.forEach(function (f, i) {
         var d = (i + 1) * 10;
-        f.style.marginLeft = (x * d) + "px";
-        f.style.marginTop = (y * d) + "px";
+        fl[i].px = x * d; fl[i].py = y * d; place(i);
       });
-    });
+    }, { passive: true });
   }
 
   // ---------- Tarjetas: brillo y leve inclinación (solo mouse) ----------
   if (finePointer && !reduce) {
     document.addEventListener("pointermove", function (e) {
+      if (lite) return;
       var card = e.target.closest && e.target.closest(".card");
       $$(".card.lit").forEach(function (c) { if (c !== card) reset(c); });
       if (!card) return;
@@ -188,6 +234,7 @@
     document.body.appendChild(halo);
     var hx = 0, hy = 0, tx = 0, ty = 0, running = false;
     document.addEventListener("pointermove", function (e) {
+      if (lite) { halo.classList.remove("on"); return; }
       tx = e.clientX; ty = e.clientY;
       halo.classList.add("on");
       if (!running) { running = true; requestAnimationFrame(follow); }
